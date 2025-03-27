@@ -1,0 +1,445 @@
+[
+  {
+    "label": "الرئيسية",
+    "withMenu": false,
+    "navListMenuItems": [],
+    "href": "/",
+    "donor": true,
+    "charity": true,
+    "blood_agency": true,
+    "partner": true,
+    "requireAuth": false
+  },
+  {
+    "label": "لوحة التحكم",
+    "withMenu": true,
+    "href": "#",
+    "donor": false,
+    "charity": false,
+    "blood_agency": true,
+    "partner": false,
+    "requireAuth": true,
+    "navListMenuItems": [
+      {
+        "title": "انشاء حملة تبرع بالدم",
+        "href": "/dashboards/blood-agency/create-campaign",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة أداء الحملة",
+        "href": "/dashboards/blood-agency/Campaign-Performance",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة إدارة المواعيد",
+        "href": "/dashboards/blood-agency/Booking",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      }
+    ]
+  },
+  {
+    "label": "لوحة التحكم",
+    "withMenu": true,
+    "href": "#",
+    "donor": false,
+    "charity": false,
+    "blood_agency": false,
+    "partner": true,
+    "requireAuth": true,
+    "navListMenuItems": [
+      {
+        "title": "لوحة إدارة المخزون",
+        "href": "/dashboards/suppliers/Inventory-Management",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة الأداء المالي",
+        "href": "/dashboards/suppliers/Financial-Performance",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "متابعة الفواتير",
+        "href": "/dashboards/suppliers/invoices-follow",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      }
+    ]
+  },
+  {
+    "label": "لوحة التحكم",
+    "withMenu": true,
+    "href": "#",
+    "donor": false,
+    "charity": true,
+    "blood_agency": false,
+    "partner": false,
+    "requireAuth": true,
+    "navListMenuItems": [
+      {
+        "title": "إنشاء فرص التبرع",
+        "href": "/dashboards/charity/create-donation-oppertunity/create?status=create",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة صحة الحساب",
+        "href": "/dashboards/charity/Account-Health",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة أداء البرامج ",
+        "href": "/dashboards/charity/Programs-Performance",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة الملخص التنفيذي",
+        "href": "/dashboards/charity/Executive-Summary",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة التحكم المالية",
+        "href": "/dashboards/charity/Financial",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة إدخال البيانات المالية",
+        "href": "/dashboards/charity/Expenses/incomes-form",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة المتبرعين",
+        "href": "/dashboards/charity/Donor",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "لوحة تأكيد الطلبية",
+        "href": "/dashboards/charity/confirm-order-receipt-form",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      }
+    ]
+  },
+  {
+    "label": "فرص التبرع",
+    "withMenu": true,
+    "href": "#",
+    "navListMenuItems": [
+      {
+        "title": "الكل",
+        "href": "/donation-opportunities",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "مشاريع",
+        "href": "/donation-opportunities/Projects?query=all",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "تيسرت",
+        "href": "/donation-opportunities/Tayasart?query=all",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "فرجت",
+        "href": "/donation-opportunities/Forejat?query=all",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "اغاثة",
+        "href": "/donation-opportunities/Eghatha?query=all",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      }
+    ],
+    "donor": true,
+    "charity": true,
+    "blood_agency": false,
+    "partner": false,
+    "requireAuth": false
+  },
+  {
+    "label": "برامجنا",
+    "withMenu": true,
+    "href": "#",
+    "navListMenuItems": [
+      {
+        "title": "الحملات",
+        "href": "/our-programmes/campaigns/",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "الزكاة",
+        "href": "/our-programmes/zakat",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "التبرع بالدم",
+        "href": "/our-programmes/blood-donation",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "الاضاحي",
+        "href": "/our-programmes/adahi",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      }
+    ],
+    "donor": true,
+    "charity": false,
+    "blood_agency": false,
+    "partner": false,
+    "requireAuth": false
+  },
+  {
+    "label": "متجر التبرع",
+    "withMenu": true,
+    "href": "#",
+    "navListMenuItems": [
+      {
+        "title": "فرص المتجر",
+        "href": "/donations-store/oppertunities",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "منتجات متجر التبرع",
+        "href": "/donations-store/products?current_category=all",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      }
+    ],
+    "donor": true,
+    "charity": true,
+    "blood_agency": false,
+    "partner": true,
+    "requireAuth": false
+  },
+  {
+    "label": "الاشتراكات",
+    "withMenu": true,
+    "href": "",
+    "navListMenuItems": [
+      {
+        "title": "العروض",
+        "href": "/subscriptions",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "اشتراكاتي",
+        "href": "/subscriptions/my-subscriptions",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "اراء وتقييمات المشتركين",
+        "href": "/subscriptions/subscribers-rating",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "تعلم كيفية استخدام مزايا الباقة",
+        "href": "/subscriptions/subscriptions-tutorial",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      }
+    ],
+    "donor": true,
+    "charity": false,
+    "blood_agency": false,
+    "partner": false,
+    "requireAuth": true
+  },
+  {
+    "label": "الاشتراكات",
+    "withMenu": true,
+    "href": "",
+    "navListMenuItems": [
+      {
+        "title": "عرورض الجمعيات الخيرية",
+        "href": "/subscriptions",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "اشتراكات الجمعيات الخيرية",
+        "href": "/subscriptions/charity-subscriptions",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "اراء وتقييمات الجمعيات الشريكة",
+        "href": "/subscriptions/partners-rating",
+        "requireAuth": true,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "تعلم كيفية استخدام مزايا الباقة",
+        "href": "/subscriptions/partner-subscriptions-tutorial",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      }
+    ],
+    "donor": false,
+    "charity": true,
+    "blood_agency": false,
+    "partner": false,
+    "requireAuth": true
+  },
+  {
+    "label": "عن عطاء",
+    "withMenu": true,
+    "href": "",
+    "navListMenuItems": [
+      {
+        "title": "من نحن",
+        "href": "/about-us",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "اللجنة الشرعية",
+        "href": "/sharia-committee",
+        "requireAuth": false,
+        "donor": true,
+        "charity": true,
+        "blood_agency": true,
+        "partner": true
+      },
+      {
+        "title": "رسوم المنصة",
+        "href": "/platform-fees",
+        "requireAuth": true,
+        "donor": true,
+        "charity": false,
+        "blood_agency": false,
+        "partner": false
+      }
+    ],
+    "donor": true,
+    "charity": true,
+    "blood_agency": true,
+    "partner": true,
+    "requireAuth": false
+  }
+]

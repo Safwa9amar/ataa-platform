@@ -1,0 +1,196 @@
+model Charity {
+    id                  String   @id @default(uuid())
+    legalName           String
+    commonName          String?
+    registrationNumber  String
+    establishmentDate   DateTime
+    registrationCountry String
+    organizationType    String
+    contactPerson       String
+    position            String?
+    logo                Image?
+    // Relations to Address
+    address             Address? @relation(fields: [addressId], references: [id])
+    addressId           String?  @unique
+
+    missionStatement      String
+    activitiesOverview    String
+    targetedBeneficiaries String
+    activityAreas         String
+    challenges            String?
+    goals                 String?
+
+    numOfBeneficiaries Int? @default(0)
+
+    // Relations to Legal and Financial Info
+    legalInfo   LegalAndFinancialInfo? @relation(fields: [legalInfoId], references: [id])
+    legalInfoId String?                @unique
+
+    // Relations to Bank Details
+    bankDetails   BankDetails? @relation(fields: [bankDetailsId], references: [id])
+    bankDetailsId String?      @unique
+
+    // Relations to Additional Documents
+    additionalDocuments   AdditionalDocuments? @relation(fields: [additionalDocumentsId], references: [id])
+    additionalDocumentsId String?              @unique
+
+    // Relations to Digital Presence
+    digitalPresence   DigitalPresence? @relation(fields: [digitalPresenceId], references: [id])
+    digitalPresenceId String?          @unique
+
+    // Relations to user
+    User                Users?
+    oppertunities       DonationOpportunity[]
+    incomes             Income[]
+    invoice             Invoice[]
+    expense             Expense[]
+    //
+    comments            Comment[] // Relation to the Comment model
+    likes               Like[] // Relation to the Like model
+    shares              CharityShares[]
+    // Step 2 fields
+    mainActivities      String?
+    majorAchievements   String?
+    mainGoals           String?
+    currentChallenges   String?
+    organizationalChart String?
+    financialManagement String?
+    aidDistribution     String?
+    partnershipPrograms Int?
+    volunteersCount     Int?
+    eventsCount         Int?
+
+    step2Completed Boolean @default(false) // Step 2 completion flag
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // FILE relations
+}
+
+model Address {
+    id         String  @id @default(uuid())
+    street     String?
+    city       String?
+    state      String?
+    postalCode String?
+    country    String?
+
+    // Relation back to Charity
+    charity     Charity?
+    bloodAgency BloodAgency?
+    user        Users?
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+}
+
+model LegalAndFinancialInfo {
+    id            String @id @default(uuid())
+    fundingSource String
+    taxID         String
+
+    // Relation back to Charity
+    charity Charity?
+
+    registrationCertificateFileId String? @unique
+    registrationCertificate       File?   @relation("RegistrationCertificate", fields: [registrationCertificateFileId], references: [id])
+
+    financialReportFileId String? @unique
+    financialReport       File?   @relation("FinancialReport", fields: [financialReportFileId], references: [id])
+
+    annualReportFileId String? @unique
+    annualReport       File?   @relation("AnnualReport", fields: [annualReportFileId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model BankDetails {
+    id            String  @id @default(uuid())
+    bankName      String
+    accountNumber String
+    IBAN          String?
+    SWIFT         String?
+    branchAddress String?
+
+    // Relation back to Charity
+    charity Charity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model AdditionalDocuments {
+    id String @id @default(uuid())
+
+    // Relation back to Charity
+    charity Charity?
+
+    foundingContractFileId String? @unique
+    foundingContract       File?   @relation("FoundingContract", fields: [foundingContractFileId], references: [id])
+
+    boardMembersFileId String? @unique
+    boardMembers       File?   @relation("BoardMembers", fields: [boardMembersFileId], references: [id])
+
+    additionalCertificatesFileIds String?
+    additionalCertificates        File?   @relation("AdditionalCertificates", fields: [additionalCertificatesFileIds], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model DigitalPresence {
+    id        String  @id @default(uuid())
+    website   String?
+    facebook  String?
+    twitter   String?
+    linkedin  String?
+    instagram String?
+
+    // Relation back to Charity
+    charity Charity?
+    // 
+    partner Partner?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Comment {
+    id              String   @id @default(uuid())
+    text            String   @db.VarChar(255)
+    createdAt       DateTime @default(now())
+    charity         Charity  @relation(fields: [charityId], references: [id])
+    charityId       String
+    createdByUser   Users    @relation(fields: [createdByUserId], references: [id])
+    createdByUserId String
+
+    // @@map("comments") // Optional: Maps to a database table called "comments"
+}
+
+model Like {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+
+    charity   Charity @relation(fields: [charityId], references: [id])
+    charityId String
+
+    createdByUserId String
+    createdByUser   Users  @relation(fields: [createdByUserId], references: [id])
+
+    // @@map("likes") // Optional: Maps to a database table called "likes"
+}
+
+model CharityShares {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    link      String?
+
+    charity   Charity @relation(fields: [charityId], references: [id])
+    charityId String
+
+    createdByUserId String
+    createdByUser   Users  @relation(fields: [createdByUserId], references: [id])
+
+    // @@map("likes") // Optional: Maps to a database table called "likes"
+}

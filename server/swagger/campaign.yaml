@@ -1,0 +1,226 @@
+openapi: 3.0.0
+info:
+  title: Campaign API
+  version: 1.0.0
+  description: API endpoints for managing campaigns in the system.
+
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+
+paths:
+  /campaigns:
+    get:
+      summary: Get all campaigns
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of campaigns
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Campaign'
+        '401':
+          description: Unauthorized
+    post:
+      summary: Create a new campaign
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCampaign'
+      responses:
+        '201':
+          description: Campaign created successfully
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+
+  /campaigns/{id}:
+    get:
+      summary: Get a campaign by ID
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the campaign
+      responses:
+        '200':
+          description: A single campaign
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '404':
+          description: Campaign not found
+        '401':
+          description: Unauthorized
+    put:
+      summary: Update a campaign by ID
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCampaign'
+      responses:
+        '200':
+          description: Campaign updated successfully
+        '404':
+          description: Campaign not found
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+    delete:
+      summary: Delete a campaign by ID
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the campaign
+      responses:
+        '200':
+          description: Campaign deleted successfully
+        '404':
+          description: Campaign not found
+        '401':
+          description: Unauthorized
+
+  /campaigns/user/{userID}:
+    get:
+      summary: Get campaigns created by a user
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the user
+        - name: type
+          in: query
+          schema:
+            type: string
+          description: The type of campaigns to filter by
+        - name: status
+          in: query
+          schema:
+            type: string
+          description: The status of campaigns to filter by
+        - name: progress
+          in: query
+          schema:
+            type: string
+            pattern: '^\d+,\d+$'
+          description: Progress range (e.g., 0,50)
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+      responses:
+        '200':
+          description: A list of campaigns
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Campaign'
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        createdByuserId:
+          type: string
+        campaignStatus:
+          type: string
+        CampaignType:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateCampaign:
+      type: object
+      required:
+        - title
+        - description
+        - CampaignType
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        CampaignType:
+          type: string
+
+    UpdateCampaign:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        CampaignType:
+          type: string

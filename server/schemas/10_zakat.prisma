@@ -1,0 +1,17 @@
+model Zakat {
+    id String @id @default(uuid())
+
+    goldAmount   Float?   @default(0)
+    silverAmount Float?   @default(0)
+    cashAmount   Float?   @default(0)
+    stockAmount  Float?   @default(0)
+    zakatTotal   Float?   @default(0)
+    donatedZakat Float?   @default(0)
+    year         Int?     @default(0)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    // relations
+    user   Users  @relation(fields: [userId], references: [id])
+    userId String
+}

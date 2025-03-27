@@ -1,0 +1,145 @@
+enum StockChangeType {
+  SALE // 🛒 بيع منتج
+  RESTOCK // 📦 إعادة تخزين
+  RESET // 🔄 تصفير المخزون
+  ADJUSTMENT // ⚙️ تعديل يدوي
+  RETURN // ♻️ إرجاع منتج
+  CANCEL_SALE // ❌ إلغاء عملية بيع
+  CANCEL_RESTOCK // ❌ إلغاء عملية شراء
+  RESERVE // ⏳ حجز مخزون
+  RELEASE_RESERVE // 🔓 إلغاء حجز مخزون
+  DAMAGE // 🏷️ خصم تالف
+  INVENTORY_CHECK // 🔍 جرد المخزون
+}
+
+enum InvoiceStatus {
+  PENDING // في انتظار المعالجة
+  PAID // مدفوعة
+  CANCELED // ملغاة
+}
+
+enum ConfirmationStatus {
+  PENDING_CHARITY // في انتظار تأكيد الجمعية
+  CONFIRMED_CHARITY // مؤكدة من الجمعية
+  CONFIRMED_PLATFORM // مؤكدة من المنصة
+}
+
+enum InvoiceTrackingStatus {
+  PENDING_CHARITY // في انتظار تأكيد الجمعية
+  CONFIRMED_CHARITY // مؤكدة من الجمعية
+  CONFIRMED_PLATFORM // مؤكدة من المنصة
+  PAID // مدفوعة
+}
+
+model Product {
+  id                String   @id @default(uuid())
+  name              String
+  description       String?
+  price             Float
+  stock             Int      @default(0)
+  imgURL            String   @default("https://ataa-platform.com/images/200/10033520/fullLogo.png")
+  socialMediaLinks  String? // Changed from String? to Json? for structured data
+  additionalDetails String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  storeCategoryId String
+  category        StoreCategory @relation(fields: [storeCategoryId], references: [id])
+
+  partnerId String?
+  partner   Partner? @relation(fields: [partnerId], references: [id])
+
+  fileID              String? @unique
+  qualityCertificates File?   @relation(fields: [fileID], references: [id])
+
+  productImages Image[] // Relationship with Image model
+
+  minimumStockLevel Int?      @default(10)
+  soldQuantity      Int       @default(0)
+  lastStockUpdate   DateTime?
+  restockDate       DateTime?
+
+  stockHistory StockHistory[]
+  donations    Donation[]
+
+  invoiceProducts InvoiceProduct[]
+}
+
+model StockHistory {
+  id         String          @id @default(uuid())
+  productId  String
+  product    Product         @relation(onDelete: Cascade, fields: [productId], references: [id])
+  oldStock   Int
+  newStock   Int
+  changeType StockChangeType // Changed from String to Enum for consistency
+  changedAt  DateTime        @default(now())
+}
+
+model StoreCategory {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  color       String?   @default("#000")
+  products    Product[]
+}
+
+model InvoiceProduct {
+  id             String @id @default(uuid())
+  productId      String
+  invoiceId      String
+  quantity       Int    @default(1)
+  priceAtInvoice Float // Price of the product at the time of invoice
+
+  product Product         @relation(fields: [productId], references: [id])
+  invoice SupplierInvoice @relation(fields: [invoiceId], references: [id]) // Fixed typo in model name
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SupplierInvoice {
+  id                    String        @id @default(uuid())
+  donationOpportunityId String?
+  issuedBySupplier      String? // المورد
+  issuedToCharity       String? // الجمعية
+  amount                Float
+  issueDate             DateTime
+  paymentDate           DateTime?
+  status                InvoiceStatus @default(PENDING)
+  notes                 String?
+  invoicePDF            String?
+
+  // الحقول الجديدة
+  confirmationStatus    ConfirmationStatus? @default(PENDING_CHARITY) // حالة التأكيد
+  paymentStatus         PaymentStatus?      @default(UNPAID) // حالة الدفع
+  confirmedByCharityAt  DateTime? // تاريخ تأكيد الجمعية
+  confirmedByPlatformAt DateTime? // تاريخ تأكيد المنصة
+  paidAt                DateTime? // تاريخ الدفع
+  platformConfirmedBy   String? // المستخدم الذي أكد الفاتورة من المنصة
+  charityId             String? // الجمعية المستفيدة
+
+  invoiceProducts InvoiceProduct[]
+  invoiceTracking InvoiceTracking[]
+
+  partnerId String?
+  partner   Partner? @relation(fields: [partnerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([confirmationStatus])
+  @@index([paymentStatus])
+}
+
+model InvoiceTracking {
+  id        String                @id @default(uuid())
+  invoiceId String
+  invoice   SupplierInvoice       @relation(fields: [invoiceId], references: [id])
+  status    InvoiceTrackingStatus // حالة التتبع
+  changedBy String // من قام بالتغيير (الجمعية أو المنصة)
+  changedAt DateTime              @default(now()) // تاريخ التغيير
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

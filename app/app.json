@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "ataa",
+    "displayName": "عطاء",
+    "slug": "client",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./android/playstore-icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo/fullLogo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#EFA"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#EFA"
+      },
+      "package": "com.astro0666.client"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "45437517-52d1-40bd-a842-8bc59e3f812b"
+      }
+    },
+    "owner": "astro0666"
+  },
+  "plugins": [
+    "expo-font",
+    {
+      "fonts": [
+        "../assets/fonts/ElMessiri.ttf"
+      ]
+    }
+  ]
+}

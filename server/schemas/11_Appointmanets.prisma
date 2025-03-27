@@ -1,0 +1,38 @@
+model Appointments {
+    id           String             @id @default(uuid())
+    title        String?
+    date         DateTime?
+    locationLink String?
+    status       appointmentsStatus @default(new)
+    isDone       Boolean            @default(false)
+    type         CAMTYPE            @default(USERCAMPAIGN)
+    bloodType    bloodType          @default(O_POSITIVE)
+    age          Int?
+    email        String?
+    phone        String?
+    createdAt    DateTime           @default(now())
+    updatedAt    DateTime           @updatedAt
+
+    // relations
+    campaignId String?
+    campaign   Campaign? @relation(fields: [campaignId], references: [id])
+
+    // relations user
+    userId String?
+    user   Users?  @relation(fields: [userId], references: [id])
+
+    // relations user
+    nationalCampaignID String?
+    nationalCampaign   NationalCampaign? @relation(fields: [nationalCampaignID], references: [id])
+}
+
+enum CAMTYPE {
+    USERCAMPAIGN
+    NATIONALCAMPAIGN
+}
+
+enum appointmentsStatus {
+    new
+    seen
+    completed
+}

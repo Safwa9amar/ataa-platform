@@ -1,0 +1,45 @@
+model BloodAgency {
+  id            String @id @default(uuid())
+  agencyName    String // Full name of the blood agency
+  officialEmail String @unique // Official email address
+  phone         String // Phone number
+
+  // Contact Information
+  contactPerson String // Name of the person managing the account
+  jobTitle      String? // Job title or position
+  contactEmail  String  @unique // Contact email
+  contactPhone  String // Contact phone number
+
+  // Relations to Address
+  address   Address? @relation(fields: [addressId], references: [id])
+  addressId String?  @unique
+
+  // Relations to nationl campain
+  nationlCampain NationalCampaign[]
+
+  // Relations to User
+  user Users?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NationalCampaign {
+  id           String @id @default(uuid())
+  campaignName String // Full name of the blood agency
+  willayaCode  String // Willaya code
+
+  targetUnit    Int // Target unit of blood to be collected
+  collectedUnit Int // Collected unit of blood
+  needyBlood    bloodType
+  locationLink  String // Location link of the campaign
+
+  // Relations to BloodAgency
+  bloodAgencyId String // Blood Agency ID
+  bloodAgency   BloodAgency @relation(fields: [bloodAgencyId], references: [id])
+
+  appointments        Appointments[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

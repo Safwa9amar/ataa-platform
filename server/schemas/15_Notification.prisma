@@ -1,0 +1,56 @@
+model Notification {
+  id       String  @id @default(uuid())
+  title    String
+  body     String
+  link     String
+  screen   String?
+  metadata Json?
+  read     Boolean @default(false)
+
+  userId String
+  user   Users  @relation(fields: [userId], references: [id])
+
+  type           NotificationType           @default(INFO) // Default notification type
+  priority       NotificationPriority       @default(LOW) // Default notification priority
+  actionState    NotificationActionState    @default(PENDING) // Default action state
+  deliveryStatus NotificationDeliveryStatus @default(SENT) // Default delivery status
+  scope          NotificationScope          @default(USER) // Default scope
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum NotificationType {
+  INFO
+  ALERT
+  SUCCESS
+  ERROR
+  REMINDER
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NotificationActionState {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DISMISSED
+}
+
+enum NotificationDeliveryStatus {
+  SENT
+  DELIVERED
+  FAILED
+  VIEWED
+}
+
+enum NotificationScope {
+  USER
+  GROUP
+  GLOBAL
+}

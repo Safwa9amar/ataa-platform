@@ -1,0 +1,15 @@
+model AlgeriaCities {
+    id                    String                @id @default(uuid())
+    wilaya_code           String
+    wilaya_name           String
+    wilaya_name_ascii     String
+    daira_name            String
+    daira_name_ascii      String
+    commune_name          String
+    commune_name_ascii    String
+    // relations
+    donationOpportunities DonationOpportunity[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,88 @@
+# ========== General ==========
+node_modules/
+.pnp/
+.pnp.js
+.yarn/install-state.gz
+.npm/
+.caches/
+dist/
+out/
+build/
+.DS_Store
+*.orig.*
+
+# ========== Environment Variables ==========
+.env
+.env*.local
+.env.development.local
+.env.production.local
+.env.test.local
+.env.example
+
+# ========== Dependencies & Package Management ==========
+node_modules/
+.pnp/
+.pnp.js
+.yarn/
+.yarnrc.yml
+.npm/
+
+# ========== Next.js ==========
+.next/
+out/
+
+# ========== Expo & React Native ==========
+.expo/
+.expo-shared/
+web-build/
+android/app/build/
+ios/Pods/
+ios/build/
+.gradle/
+.idea/
+
+# ========== Debugging ==========
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+metro-health-check*
+
+# ========== Testing & Coverage ==========
+/coverage/
+jest/
+.vscode/
+*.log
+
+# ========== macOS Specific ==========
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ========== Build & Production ==========
+/build/
+/out/
+/dist/
+/tmp/
+/public/static/
+/server/uploads
+/server/uploads/
+/uploads/
+
+
+# ========== Vercel & Deployment ==========
+.vercel/
+.netlify/
+
+# ========== TypeScript ==========
+*.tsbuildinfo
+next-env.d.ts
+
+# ========== Certificates & Keys ==========
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# ========== Learn More ==========
+# GitHub Guide: https

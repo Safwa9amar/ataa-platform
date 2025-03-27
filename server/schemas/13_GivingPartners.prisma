@@ -1,0 +1,36 @@
+model GivingPartners {
+    id              String              @id @default(uuid())
+    name            String
+    description     String
+    logo            String
+    url             String
+    ActivityField   String?
+    Headquarters    String?
+    type            GivingPartnersTypes @default(Government)
+    PartnershipType PartnershipType     @default(DonationSolutions)
+    createdAt       DateTime            @default(now())
+    updatedAt       DateTime            @updatedAt
+}
+
+model SupervisoryAuthorities {
+    id          String   @id @default(uuid())
+    name        String
+    description String
+    logo        String
+    url         String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+enum GivingPartnersTypes {
+    Government
+    Private
+}
+
+enum PartnershipType {
+    Strategic
+    Marketing
+    Supervisory
+    Sponsor
+    DonationSolutions
+}

@@ -1,0 +1,103 @@
+model Campaign {
+    // Identification
+    id    String @id @default(uuid())
+    title String
+
+    // Description
+    description String?   @db.Text
+    isAgreed    Boolean?  @default(false)
+    rejected    Boolean?  @default(false)
+    rejectedAt  DateTime?
+    rejectedBy  String?
+    rejectedWhy String?
+
+    // Donation Information
+    lastDonation DateTime?
+
+    numOfBeneficiaries Int? @default(0)
+
+    numberOfUnits Int? @default(0)
+
+    unitPrice Float? @default(0)
+
+    donatedUnits  Int? @default(0)
+    donationCount Int? @default(0)
+
+    // Campaign Status and Type
+    campaignStatus CampaignStatus @default(NOT_URGENT)
+    CampaignType   CampaignType   @default(MONEY)
+
+    // Financial Information
+    bankAccount String?
+
+    // Contact Information
+    email String?
+    name  String?
+    phone String?
+
+    // Payout Owner Information
+    ownerAddress String?
+    ownerEmail   String?
+    ownerPhone   String?
+    ownerID      String?
+    ownerName    String?
+
+    // Blood Donation Information
+    bloodBankName     String?
+    selectedBloodType bloodType?
+
+    // Location Information
+    googleMapLink String?
+    wilaya        String?
+    commune       Int?
+    daira         String?
+
+    // Media
+    cardImage String @default("")
+
+    // Relations
+    createdByuserId   String
+    user              Users              @relation(fields: [createdByuserId], references: [id])
+    infoSectionsCards InfoSectionsCard[]
+    infoSections      InfoSection[]
+    proofFiles        File[]
+    images            Image[]
+    donations         Donation[]
+    appointments      Appointments[]
+    visits            Visit[]
+    sharedLinks       SharedLinks[]
+
+    progress   Progress? @relation
+    fieldId    String?
+    field      Field?    @relation(fields: [fieldId], references: [id])
+    categoryId String?
+    category   Category? @relation(fields: [categoryId], references: [id])
+
+    // Timestamps
+    endAt     DateTime?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+}
+
+enum CampaignStatus {
+    ONGOING
+    URGENT
+    NOT_URGENT
+}
+
+enum CampaignType {
+    BLOOD
+    MONEY
+    GOODS
+}
+
+enum bloodType {
+    A_POSITIVE
+    A_NEGATIVE
+    B_POSITIVE
+    B_NEGATIVE
+    O_POSITIVE
+    O_NEGATIVE
+    AB_POSITIVE
+    AB_NEGATIVE
+}

@@ -1,0 +1,76 @@
+model Plan {
+    id            String         @id @default(uuid())
+    title         String // عنوان الباقة
+    description   String // وصف الباقة
+    price         Float // السعر الأساسي
+    features      feature[] // الميزات المتضمنة في الباقة
+    package       Package        @default(REGULAR)
+    for           Role?          @default(donor)
+    createdAt     DateTime       @default(now()) // وقت إنشاء الباقة
+    paymentLink   String? // رابط الدفعy
+    updatedAt     DateTime       @updatedAt // وقت التحديث الأخير
+    subscriptions Subscription[] // الاشتراكات المرتبطة بهذه الباقة
+}
+
+model feature {
+    id          String   @id @default(uuid())
+    title       String // عنوان الميزة
+    description String // وصف الميزة
+    planId      String
+    plan        Plan     @relation(fields: [planId], references: [id])
+    createdAt   DateTime @default(now()) // وقت إنشاء الميزة
+    updatedAt   DateTime @updatedAt // وقت التحديث الأخير
+}
+
+model Subscription {
+    id              String        @id @default(uuid())
+    userId          String        
+    user            Users         @relation(fields: [userId], references: [id])
+    planId          String // معرف الباقة المرتبطة
+    plan            Plan          @relation(fields: [planId], references: [id]) // العلاقة مع جدول الباقات
+    price           Float
+    discount        Float? // الخصم المطبق على الاشتراك (اختياري)
+    tax             Float? // الضرائب المطبقة على الاشتراك (اختياري)
+    totalPrice      Float // السعر الإجمالي بعد الخصم والضرائب
+    startDate       DateTime      @default(now())
+    endDate         DateTime      @map("end_date")
+    status          Status        @default(ACTIVE) // حالة الاشتراك
+    paymentDate     DateTime? // تاريخ الدفع
+    paymentMethod   PaymentMethod // طريقة الدفع
+    isRecurring     Boolean       @default(false) // اشتراك متكرر؟
+    isEdited        Boolean       @default(false) // تم تعديل الاشتراك؟
+    isTrial         Boolean       @default(false) // اشتراك تجريبي؟
+    billingCycle    BillingCycle  @default(YEARLY) // دورة الفوترة (شهري، سنوي)
+    maxUsersAllowed Int? // عدد المستخدمين المسموح بهم (للجمعيات)
+    renewalReminder Boolean       @default(false) // تذكير للتجديد
+    notes           String? // ملاحظات إضافية (اختيارية)
+    createdAt       DateTime      @default(now()) // وقت إنشاء الاشتراك
+    updatedAt       DateTime      @updatedAt // وقت التحديث الأخير
+}
+
+enum Package {
+    REGULAR
+    ADVANCED
+    PREMIUM
+}
+
+enum Status {
+    ACTIVE // الاشتراك نشط
+    EXPIRED // الاشتراك منتهي
+    CANCELED // الاشتراك ملغي
+    PENDING // الاشتراك في انتظار التأكيد
+}
+
+enum PaymentMethod {
+    CREDIT_CARD // بطاقة ائتمان
+    BANK_TRANSFER // تحويل بنكي
+    STRIPE // بايبال
+    CHARGILY // نقداً
+    OTHER // طريقة دفع أخرى
+}
+
+enum BillingCycle {
+    MONTHLY // دورة فوترة شهرية
+    QUARTERLY // دورة فوترة كل 3 أشهر
+    YEARLY // دورة فوترة سنوية
+}

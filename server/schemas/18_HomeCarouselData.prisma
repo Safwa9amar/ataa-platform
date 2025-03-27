@@ -1,0 +1,12 @@
+model HomeCarouselData {
+    id              String   @id @default(uuid())
+    title           String
+    description     String
+    backgroundImage String
+    silderImage     String?
+    actionBtnTitle  String
+    webLink         String
+    appLink         String
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+}

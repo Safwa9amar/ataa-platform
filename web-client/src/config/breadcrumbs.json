@@ -1,0 +1,458 @@
+[
+  {
+    "pathname": "/about-us",
+    "label": "معلومات عنا"
+  },
+  {
+    "pathname": "/account/login",
+    "label": "تسجيل الدخول"
+  },
+  {
+    "pathname": "/account/password-reset",
+    "label": "إعادة تعيين كلمة المرور"
+  },
+  {
+    "pathname": "/account/profile/blood_agency",
+    "label": "ملف وكالة الدم"
+  },
+  {
+    "pathname": "/account/profile/blood_agency/password-security",
+    "label": "أمان كلمة المرور لوكالة الدم"
+  },
+  {
+    "pathname": "/account/profile/charity",
+    "label": "ملف الجمعية الخيرية"
+  },
+  {
+    "pathname": "/account/profile/charity/password-security",
+    "label": "أمان كلمة المرور للجمعية الخيرية"
+  },
+  {
+    "pathname": "/account/profile/charity/step2",
+    "label": "الخطوة الثانية للجمعية الخيرية"
+  },
+  {
+    "pathname": "/account/profile/donor/balance-history",
+    "label": "سجل الرصيد للمتبرع"
+  },
+  {
+    "pathname": "/account/profile/donor/balance-recharge",
+    "label": "إعادة شحن الرصيد للمتبرع"
+  },
+  {
+    "pathname": "/account/profile/donor/balance-uses",
+    "label": "استخدامات الرصيد للمتبرع"
+  },
+  {
+    "pathname": "/account/profile/donor/donation-history",
+    "label": "سجل التبرعات للمتبرع"
+  },
+  {
+    "pathname": "/account/profile/donor",
+    "label": "ملف المتبرع"
+  },
+  {
+    "pathname": "/account/profile/donor/password-security",
+    "label": "أمان كلمة المرور للمتبرع"
+  },
+  {
+    "pathname": "/account/profile/donor/points-reedom",
+    "label": "استبدال النقاط للمتبرع"
+  },
+  {
+    "pathname": "/account/profile",
+    "label": "الملف الشخصي"
+  },
+  {
+    "pathname": "/account/profile/partner",
+    "label": "ملف الشريك"
+  },
+  {
+    "pathname": "/account/profile/partner/password-security",
+    "label": "أمان كلمة المرور للشريك"
+  },
+  {
+    "pathname": "/account/register",
+    "label": "التسجيل"
+  },
+  {
+    "pathname": "/account/register/type/:type",
+    "label": "التسجيل حسب النوع"
+  },
+  {
+    "pathname": "/account/register/type",
+    "label": "اختيار نوع التسجيل"
+  },
+  {
+    "pathname": "/account/unauthorized",
+    "label": "غير مصرح به"
+  },
+  {
+    "pathname": "/cart",
+    "label": "سلة التبرع"
+  },
+  {
+    "pathname": "/charities/:id",
+    "label": "تفاصيل الجمعية الخيرية"
+  },
+  {
+    "pathname": "/charities",
+    "label": "الجمعيات الخيرية"
+  },
+  {
+    "pathname": "/charity-partners",
+    "label": "شركاء عطاء"
+  },
+  {
+    "pathname": "/contact-us/call",
+    "label": "اتصل بنا"
+  },
+  {
+    "pathname": "/contact-us/chat",
+    "label": "الدردشة معنا"
+  },
+  {
+    "pathname": "/contact-us",
+    "label": "اتصل بنا"
+  },
+  {
+    "pathname": "/dashboards/admin",
+    "label": "لوحة تحكم المدير"
+  },
+  {
+    "pathname": "/dashboards/blood-agency/Booking",
+    "label": "حجوزات وكالة الدم"
+  },
+  {
+    "pathname": "/dashboards/blood-agency/Campaign-Performance",
+    "label": "أداء حملات وكالة الدم"
+  },
+  {
+    "pathname": "/dashboards/blood-agency/create-campaign",
+    "label": "إنشاء حملة لوكالة الدم"
+  },
+  {
+    "pathname": "/dashboards/charity/Account-Health",
+    "label": "صحة حساب الجمعية"
+  },
+  {
+    "pathname": "/dashboards/charity/Donor",
+    "label": "المتبرعون"
+  },
+  {
+    "pathname": "/dashboards/charity/Executive-Summary",
+    "label": "الملخص التنفيذي للجمعية"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/expenses-table/:id",
+    "label": "جدول المصروفات"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/expenses-table",
+    "label": "جدول المصروفات"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/exprenses-form",
+    "label": "نموذج إضافة مصروفات"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/incomes-form",
+    "label": "نموذج إضافة إيرادات"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/incomes-table/:incomeId",
+    "label": "جدول الإيرادات"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/incomes-table",
+    "label": "جدول الإيرادات"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/invoice-form",
+    "label": "نموذج إنشاء فاتورة"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/invoice-table/:id",
+    "label": "جدول الفواتير"
+  },
+  {
+    "pathname": "/dashboards/charity/Expenses/invoice-table",
+    "label": "جدول الفواتير"
+  },
+  {
+    "pathname": "/dashboards/charity/Financial",
+    "label": "الإدارة المالية"
+  },
+  {
+    "pathname": "/dashboards/charity/Programs-Performance",
+    "label": "أداء البرامج"
+  },
+  {
+    "pathname": "/dashboards/charity/confirm-order-receipt-form",
+    "label": "نموذج تأكيد استلام الطلب"
+  },
+  {
+    "pathname": "/dashboards/charity/create-donation-oppertunity/create",
+    "label": "إنشاء فرصة تبرع جديدة"
+  },
+  {
+    "pathname": "/dashboards/charity/create-donation-oppertunity",
+    "label": "إنشاء فرص التبرع"
+  },
+  {
+    "pathname": "/dashboards/suppliers/Financial-Performance",
+    "label": "أداء الموردين المالي"
+  },
+  {
+    "pathname": "/dashboards/suppliers/Inventory-Management",
+    "label": "إدارة مخزون الموردين"
+  },
+  {
+    "pathname": "/dashboards/suppliers/invoices-follow/create",
+    "label": "إنشاء متابعة فواتير"
+  },
+  {
+    "pathname": "/dashboards/suppliers/invoices-follow",
+    "label": "متابعة الفواتير"
+  },
+  {
+    "pathname": "/donate-now",
+    "label": "تبرع الآن"
+  },
+  {
+    "pathname": "/donation-opportunities/:search",
+    "label": "فرص التبرع"
+  },
+  {
+    "pathname": "/donation-opportunities",
+    "label": "فرص التبرع"
+  },
+  {
+    "pathname": "/donation-opportunity",
+    "label": "فرصة التبرع"
+  },
+  {
+    "pathname": "/donations-store/oppertunities/:id",
+    "label": "فرص التبرع في المتجر"
+  },
+  {
+    "pathname": "/donations-store/oppertunities",
+    "label": "فرص التبرع في المتجر"
+  },
+  {
+    "pathname": "/donations-store/products",
+    "label": "منتجات المتجر"
+  },
+  {
+    "pathname": "/faq",
+    "label": "الأسئلة الشائعة"
+  },
+  {
+    "pathname": "/fast-donation-fail",
+    "label": "فشل التبرع السريع"
+  },
+  {
+    "pathname": "/fast-donation-success",
+    "label": "نجاح التبرع السريع"
+  },
+  {
+    "pathname": "/giving-ambassadors",
+    "label": "سفراء العطاء"
+  },
+  {
+    "pathname": "/help-center",
+    "label": "مركز المساعدة"
+  },
+  {
+    "pathname": "/major-benefactors",
+    "label": "كبار المحسنين"
+  },
+  {
+    "pathname": "/our-programmes/adahi",
+    "label": "برنامج الأضاحي"
+  },
+  {
+    "pathname": "/our-programmes/blood-donation/create",
+    "label": "إنشاء حملة تبرع بالدم"
+  },
+  {
+    "pathname": "/our-programmes/blood-donation/my-appointments",
+    "label": "مواعيدي للتبرع بالدم"
+  },
+  {
+    "pathname": "/our-programmes/blood-donation/my-campaigns/completed",
+    "label": "حملاتي المكتملة"
+  },
+  {
+    "pathname": "/our-programmes/blood-donation/my-campaigns",
+    "label": "حملاتي"
+  },
+  {
+    "pathname": "/our-programmes/blood-donation/national-campaigns",
+    "label": "الحملات الوطنية للتبرع بالدم"
+  },
+  {
+    "pathname": "/our-programmes/blood-donation",
+    "label": "برنامج التبرع بالدم"
+  },
+  {
+    "pathname": "/our-programmes/blood-donation/users-campaigns",
+    "label": "حملات المستخدمين"
+  },
+  {
+    "pathname": "/our-programmes/campaign/details/:id",
+    "label": "تفاصيل الحملة"
+  },
+  {
+    "pathname": "/our-programmes/campaign/national-blood",
+    "label": "الحملة الوطنية للتبرع بالدم"
+  },
+  {
+    "pathname": "/our-programmes/campaign/user-blood/book-appointment",
+    "label": "حجز موعد للتبرع بالدم"
+  },
+  {
+    "pathname": "/our-programmes/campaign/user-blood",
+    "label": "حملات التبرع بالدم للمستخدمين"
+  },
+  {
+    "pathname": "/our-programmes/campaigns/create",
+    "label": "إنشاء حملة جديدة"
+  },
+  {
+    "pathname": "/our-programmes/campaigns/my-campaigns/completed",
+    "label": "حملاتي المكتملة"
+  },
+  {
+    "pathname": "/our-programmes/campaigns/my-campaigns",
+    "label": "حملاتي"
+  },
+  {
+    "pathname": "/our-programmes/campaigns",
+    "label": "الحملات"
+  },
+  {
+    "pathname": "/our-programmes/campaigns/users-campaigns",
+    "label": "حملات المستخدمين"
+  },
+  {
+    "pathname": "/our-programmes/zakat/calculate/el-mal",
+    "label": "حساب زكاة المال"
+  },
+  {
+    "pathname": "/our-programmes/zakat/calculate/gold",
+    "label": "حساب زكاة الذهب"
+  },
+  {
+    "pathname": "/our-programmes/zakat/calculate",
+    "label": "حساب الزكاة"
+  },
+  {
+    "pathname": "/our-programmes/zakat/calculate/silver",
+    "label": "حساب زكاة الفضة"
+  },
+  {
+    "pathname": "/our-programmes/zakat/calculate/stocks",
+    "label": "حساب زكاة الأسهم"
+  },
+  {
+    "pathname": "/our-programmes/zakat/direct",
+    "label": "التبرع بالزكاة مباشرة"
+  },
+  {
+    "pathname": "/our-programmes/zakat",
+    "label": "برنامج الزكاة"
+  },
+  {
+    "pathname": "/",
+    "label": "الصفحة الرئيسية"
+  },
+  {
+    "pathname": "/platform-fees/donation-methods",
+    "label": "طرق التبرع والرسوم"
+  },
+  {
+    "pathname": "/platform-fees/islam-opinion",
+    "label": "رأي الإسلام في الرسوم"
+  },
+  {
+    "pathname": "/platform-fees/minimum-donation",
+    "label": "الحد الأدنى للتبرع"
+  },
+  {
+    "pathname": "/platform-fees",
+    "label": "رسوم المنصة"
+  },
+  {
+    "pathname": "/privacy-policy",
+    "label": "سياسة الخصوصية"
+  },
+  {
+    "pathname": "/saved-opportunities/campaigns",
+    "label": "الحملات المحفوظة"
+  },
+  {
+    "pathname": "/saved-opportunities",
+    "label": "الفرص المحفوظة"
+  },
+  {
+    "pathname": "/saved-opportunities/store",
+    "label": "المتجر المحفوظ"
+  },
+  {
+    "pathname": "/share/:id",
+    "label": "مشاركة"
+  },
+  {
+    "pathname": "/sharia-committee",
+    "label": "اللجنة الشرعية"
+  },
+  {
+    "pathname": "/statistics/Beneficiaries",
+    "label": "إحصائيات المستفيدين"
+  },
+  {
+    "pathname": "/statistics/completed-opportunities",
+    "label": "إحصائيات الفرص المكتملة"
+  },
+  {
+    "pathname": "/statistics",
+    "label": "الإحصائيات"
+  },
+  {
+    "pathname": "/subscriptions/charity-subscriptions",
+    "label": "اشتراكات الجمعيات الخيرية"
+  },
+  {
+    "pathname": "/subscriptions/my-subscriptions",
+    "label": "اشتراكاتي"
+  },
+  {
+    "pathname": "/subscriptions",
+    "label": "الاشتراكات"
+  },
+  {
+    "pathname": "/subscriptions/partner-subscriptions-tutorial/:video",
+    "label": "دليل اشتراكات الشركاء"
+  },
+  {
+    "pathname": "/subscriptions/partner-subscriptions-tutorial",
+    "label": "دليل اشتراكات الشركاء"
+  },
+  {
+    "pathname": "/subscriptions/partners-rating",
+    "label": "تقييم الشركاء"
+  },
+  {
+    "pathname": "/subscriptions/subscribers-rating",
+    "label": "تقييم المشتركين"
+  },
+  {
+    "pathname": "/subscriptions/subscriptions-tutorial/:video",
+    "label": "دليل الاشتراكات"
+  },
+  {
+    "pathname": "/subscriptions/subscriptions-tutorial",
+    "label": "دليل الاشتراكات"
+  }
+]

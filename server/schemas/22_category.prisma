@@ -1,0 +1,198 @@
+model Category {
+    id       String @id @default(uuid())
+    title    String
+    ar_title String
+
+    type      categoryType @default(Projects)
+    createdAt DateTime     @default(now())
+    updatedAt DateTime     @updatedAt
+
+    fieldId String
+    field   Field  @relation(fields: [fieldId], references: [id])
+
+    donationOpportunities DonationOpportunity[]
+    campaign              Campaign[]
+
+    // Subcategories (One-to-One Relationships)
+    Projects       Projects[]
+    Housing        Housing[]
+    Orphans        Orphans[]
+    Mosques        Mosques[]
+    Sonalgaz       Sonalgaz[]
+    Ade            Ade[]
+    Justice        Justice[]
+    DisasterRelief DisasterRelief[]
+}
+
+model Orphans {
+    id                 String    @id @default(uuid())
+    gender             String // ذكر؛ أنثى؛ مجموعة مختلطة ذكور وإناث
+    age                String?
+    orphanDuration     String? // مدة اليتم
+    schoolLevel        String? // المرحلة الدراسية
+    guardianName       String? // اسم الوصي
+    guardianPhone      String? // رقم هاتف الوصي
+    healthStatus       String? // الحالة الصحية
+    birthDate          DateTime? // تاريخ الميلاد
+    residence          String? // عنوان الإقامة
+    financialNeeds     Float? // الاحتياجات المالية الشهرية
+    psychologicalNeeds String? // الاحتياجات النفسية
+    educationSupport   String? // الدعم التعليمي المطلوب
+
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Mosques {
+    id                  String   @id @default(uuid())
+    wilaya              String? // الولاية
+    region              String? // المنطقة
+    requiredCare        String?
+    damageDegree        String?
+    googleMapUrl        String? // موقع المسجد على خرائط غوغل
+    imamName            String? // اسم الإمام
+    contactPhone        String? // رقم الهاتف للتواصل
+    constructionYear    Int? // سنة بناء المسجد
+    prayerCapacity      Int? // سعة المسجد (عدد المصلين)
+    electricityNeeds    Boolean? // الحاجة إلى كهرباء (نعم/لا)
+    waterAvailability   Boolean? // توفر الماء
+    maintenanceRequired String? // نوع الصيانة المطلوبة
+
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Projects {
+    id            String  @id @default(uuid())
+    gender        String?
+    maritalStatus String?
+
+    age              String?
+    numberOfChildren String?
+    specialNeeds     String?
+
+    categoryId  String
+    category    Category             @relation(fields: [categoryId], references: [id])
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Housing {
+    id            String  @id @default(uuid())
+    gender        String?
+    maritalStatus String?
+
+    age              String?
+    numberOfChildren String?
+
+    categoryId  String
+    category    Category             @relation(fields: [categoryId], references: [id])
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Sonalgaz {
+    id            String               @id @default(uuid())
+    gender        String?
+    maritalStatus String?
+    status        String?
+    categoryId    String
+    category      Category             @relation(fields: [categoryId], references: [id])
+    opportunity   DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Ade {
+    id            String               @id @default(uuid())
+    gender        String?
+    maritalStatus String?
+    status        String?
+    categoryId    String
+    category      Category             @relation(fields: [categoryId], references: [id])
+    opportunity   DonationOpportunity?
+    createdAt     DateTime             @default(now())
+    updatedAt     DateTime             @updatedAt
+}
+
+model Justice {
+    id            String  @id @default(uuid())
+    gender        String
+    maritalStatus String
+    age           String
+    casesNum      String
+    duration      String?
+
+    categoryId  String
+    category    Category             @relation(fields: [categoryId], references: [id])
+    opportunity DonationOpportunity?
+    createdAt   DateTime             @default(now())
+    updatedAt   DateTime             @updatedAt
+}
+
+model DisasterRelief {
+    id           String @id @default(uuid())
+    prisonRegion String
+    caseDetails  String
+    legalFees    String
+
+    categoryId  String
+    category    Category             @relation(fields: [categoryId], references: [id])
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// model Needs {
+//     id             String    @id @default(uuid())
+//     name           String
+//     ar_name        String
+//     createdAt      DateTime  @default(now())
+//     updatedAt      DateTime  @updatedAt
+//     MosqueCategory Mosques[]
+// }
+
+enum categoryType {
+    Projects // مشاريع عامة
+    Orphans // كفالة أيتام
+    Housing // السكن
+    Mosques // العناية بالمساجد
+    Sonalgaz // فواتير الكهرباء والغاز
+    Ade // شركة المياه
+    Justice // قضايا قضائية
+    Education // التعليم
+    Health // الصحة
+    Emergencies // حالات الطوارئ
+    Community // المبادرات المجتمعية
+    Environment // البيئة
+    Agriculture // الزراعة
+    Water // مشاريع المياه
+    FoodRelief // الإغاثة الغذائية
+    Scholarships // المنح الدراسية
+    Employment // التوظيف ودعم الأعمال
+    WomenEmpowerment // تمكين المرأة
+    DisabledSupport // دعم الأشخاص ذوي الإعاقة
+    DisasterRelief // الإغاثة في الكوارث
+    AnimalWelfare // رعاية الحيوانات
+    Technology // التكنولوجيا والابتكار
+    ArtsAndCulture // الفنون والثقافة
+    Sports // الرياضة
+    ElderlyCare // رعاية كبار السن
+    RuralDevelopment // تنمية المناطق الريفية
+}

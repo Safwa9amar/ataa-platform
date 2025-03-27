@@ -1,0 +1,27 @@
+model SharedLinks {
+    id                    String               @id @default(uuid())
+    userId                String
+    user                  Users                @relation(fields: [userId], references: [id])
+    linkType              LinkType
+    platform              SocialPlatform
+    uniqueLink            String               @unique
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+    campaignId            String?
+    campaign              Campaign?            @relation(fields: [campaignId], references: [id])
+
+    donationCount    Int @default(0) // عدد التبرعات من الرابط
+    ambassadorPoints Int @default(0) // نقاط مشاركة (سفراء العطاء)
+    donationPoints   Int @default(0) // نقاط التبرعات
+
+    createdAt DateTime @default(now())
+}
+
+enum SocialPlatform {
+    FACEBOOK
+    TWITTER
+    INSTAGRAM
+    LINKEDIN
+    WHATSAPP
+    Other
+}

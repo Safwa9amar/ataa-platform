@@ -1,0 +1,21 @@
+// schema.prisma
+enum IncomeSource {
+    DONATION
+    SALES
+    GOVERNMENT_SUPPORT
+    GRANT
+    OTHER
+}
+
+model Income {
+    id          String       @id @default(uuid())
+    source      IncomeSource @default(OTHER)
+    amount      Float
+    receiptDate DateTime?
+    notes       String?
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+
+    charityId String // Relation to charity model
+    charity   Charity @relation(fields: [charityId], references: [id])
+}

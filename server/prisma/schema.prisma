@@ -1,0 +1,1590 @@
+// model FastDonation {
+//     id                   String               @id @default(uuid())
+//     field                String
+//     amount               Float
+//     paymentMethode       String
+//     email                String?
+//     donationOpprtunityId String?
+//     donationOpprtunity   DonationOpportunity? @relation(fields: [donationOpprtunityId], references: [id])
+//     // relations
+//     screenShootId        String?              @unique
+//     screenShoot          Image?               @relation(fields: [screenShootId], references: [id])
+// }
+
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("PROD_DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+
+// schema.prisma
+enum IncomeSource {
+    DONATION
+    SALES
+    GOVERNMENT_SUPPORT
+    GRANT
+    OTHER
+}
+
+model Income {
+    id          String       @id @default(uuid())
+    source      IncomeSource @default(OTHER)
+    amount      Float
+    receiptDate DateTime?
+    notes       String?
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+
+    charityId String // Relation to charity model
+    charity   Charity @relation(fields: [charityId], references: [id])
+}
+
+
+// schema.prisma
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  UNPAID
+}
+
+model Invoice {
+  id                 String        @id @default(uuid())
+  invoiceNumber      String        @unique // Unique invoice number
+  paymentStatus      PaymentStatus @default(PENDING) // Payment status (PAID, PENDING, UNPAID)
+  issuerBeneficiary  String        // Issuer or beneficiary name
+  invoiceAmount      Float         // Amount of the invoice
+  issueDate          DateTime      // Date the invoice was issued
+  paymentDate        DateTime?     // Optional date when payment was made
+  notes              String?       // Additional notes
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  charityId          String        // Relation to charity model
+  charity            Charity       @relation(fields: [charityId], references: [id])
+}
+
+// schema.prisma
+
+enum ExpenseType {
+    OPERATIONAL
+    ADMINISTRATIVE
+    NON_OPERATIONAL
+}
+
+model Expense {
+    id            String      @id @default(uuid())
+    type          ExpenseType
+    amount        Float
+    paymentDate   DateTime
+    recipient     String
+    notes         String?
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+
+    charityId String // Relation to Charity model
+    charity   Charity @relation(fields: [charityId], references: [id])
+}
+
+
+enum StockChangeType {
+  SALE // 🛒 بيع منتج
+  RESTOCK // 📦 إعادة تخزين
+  RESET // 🔄 تصفير المخزون
+  ADJUSTMENT // ⚙️ تعديل يدوي
+  RETURN // ♻️ إرجاع منتج
+  CANCEL_SALE // ❌ إلغاء عملية بيع
+  CANCEL_RESTOCK // ❌ إلغاء عملية شراء
+  RESERVE // ⏳ حجز مخزون
+  RELEASE_RESERVE // 🔓 إلغاء حجز مخزون
+  DAMAGE // 🏷️ خصم تالف
+  INVENTORY_CHECK // 🔍 جرد المخزون
+}
+
+enum InvoiceStatus {
+  PENDING // في انتظار المعالجة
+  PAID // مدفوعة
+  CANCELED // ملغاة
+}
+
+enum ConfirmationStatus {
+  PENDING_CHARITY // في انتظار تأكيد الجمعية
+  CONFIRMED_CHARITY // مؤكدة من الجمعية
+  CONFIRMED_PLATFORM // مؤكدة من المنصة
+}
+
+enum InvoiceTrackingStatus {
+  PENDING_CHARITY // في انتظار تأكيد الجمعية
+  CONFIRMED_CHARITY // مؤكدة من الجمعية
+  CONFIRMED_PLATFORM // مؤكدة من المنصة
+  PAID // مدفوعة
+}
+
+model Product {
+  id                String   @id @default(uuid())
+  name              String
+  description       String?
+  price             Float
+  stock             Int      @default(0)
+  imgURL            String   @default("https://ataa-platform.com/images/200/10033520/fullLogo.png")
+  socialMediaLinks  String? // Changed from String? to Json? for structured data
+  additionalDetails String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  storeCategoryId String
+  category        StoreCategory @relation(fields: [storeCategoryId], references: [id])
+
+  partnerId String?
+  partner   Partner? @relation(fields: [partnerId], references: [id])
+
+  fileID              String? @unique
+  qualityCertificates File?   @relation(fields: [fileID], references: [id])
+
+  productImages Image[] // Relationship with Image model
+
+  minimumStockLevel Int?      @default(10)
+  soldQuantity      Int       @default(0)
+  lastStockUpdate   DateTime?
+  restockDate       DateTime?
+
+  stockHistory StockHistory[]
+  donations    Donation[]
+
+  invoiceProducts InvoiceProduct[]
+}
+
+model StockHistory {
+  id         String          @id @default(uuid())
+  productId  String
+  product    Product         @relation(onDelete: Cascade, fields: [productId], references: [id])
+  oldStock   Int
+  newStock   Int
+  changeType StockChangeType // Changed from String to Enum for consistency
+  changedAt  DateTime        @default(now())
+}
+
+model StoreCategory {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  color       String?   @default("#000")
+  products    Product[]
+}
+
+model InvoiceProduct {
+  id             String @id @default(uuid())
+  productId      String
+  invoiceId      String
+  quantity       Int    @default(1)
+  priceAtInvoice Float // Price of the product at the time of invoice
+
+  product Product         @relation(fields: [productId], references: [id])
+  invoice SupplierInvoice @relation(fields: [invoiceId], references: [id]) // Fixed typo in model name
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SupplierInvoice {
+  id                    String        @id @default(uuid())
+  donationOpportunityId String?
+  issuedBySupplier      String? // المورد
+  issuedToCharity       String? // الجمعية
+  amount                Float
+  issueDate             DateTime
+  paymentDate           DateTime?
+  status                InvoiceStatus @default(PENDING)
+  notes                 String?
+  invoicePDF            String?
+
+  // الحقول الجديدة
+  confirmationStatus    ConfirmationStatus? @default(PENDING_CHARITY) // حالة التأكيد
+  paymentStatus         PaymentStatus?      @default(UNPAID) // حالة الدفع
+  confirmedByCharityAt  DateTime? // تاريخ تأكيد الجمعية
+  confirmedByPlatformAt DateTime? // تاريخ تأكيد المنصة
+  paidAt                DateTime? // تاريخ الدفع
+  platformConfirmedBy   String? // المستخدم الذي أكد الفاتورة من المنصة
+  charityId             String? // الجمعية المستفيدة
+
+  invoiceProducts InvoiceProduct[]
+  invoiceTracking InvoiceTracking[]
+
+  partnerId String?
+  partner   Partner? @relation(fields: [partnerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([confirmationStatus])
+  @@index([paymentStatus])
+}
+
+model InvoiceTracking {
+  id        String                @id @default(uuid())
+  invoiceId String
+  invoice   SupplierInvoice       @relation(fields: [invoiceId], references: [id])
+  status    InvoiceTrackingStatus // حالة التتبع
+  changedBy String // من قام بالتغيير (الجمعية أو المنصة)
+  changedAt DateTime              @default(now()) // تاريخ التغيير
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Visit {
+    id        String   @id @default(uuid())
+    ipAddress String
+    userAgent String
+    visitedAt DateTime @default(now())
+
+    // relations
+    campiagnId String?
+    campaign   Campaign? @relation(fields: [campiagnId], references: [id])
+
+    donationOppertunityID String?
+    donationOppertunity   DonationOpportunity? @relation(fields: [donationOppertunityID], references: [id])
+
+    // @@unique([ipAddress, userAgent, campiagnId, donationOppertunityID])
+}
+
+
+model Zakat {
+    id String @id @default(uuid())
+
+    goldAmount   Float?   @default(0)
+    silverAmount Float?   @default(0)
+    cashAmount   Float?   @default(0)
+    stockAmount  Float?   @default(0)
+    zakatTotal   Float?   @default(0)
+    donatedZakat Float?   @default(0)
+    year         Int?     @default(0)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    // relations
+    user   Users  @relation(fields: [userId], references: [id])
+    userId String
+}
+
+
+model Appointments {
+    id           String             @id @default(uuid())
+    title        String?
+    date         DateTime?
+    locationLink String?
+    status       appointmentsStatus @default(new)
+    isDone       Boolean            @default(false)
+    type         CAMTYPE            @default(USERCAMPAIGN)
+    bloodType    bloodType          @default(O_POSITIVE)
+    age          Int?
+    email        String?
+    phone        String?
+    createdAt    DateTime           @default(now())
+    updatedAt    DateTime           @updatedAt
+
+    // relations
+    campaignId String?
+    campaign   Campaign? @relation(fields: [campaignId], references: [id])
+
+    // relations user
+    userId String?
+    user   Users?  @relation(fields: [userId], references: [id])
+
+    // relations user
+    nationalCampaignID String?
+    nationalCampaign   NationalCampaign? @relation(fields: [nationalCampaignID], references: [id])
+}
+
+enum CAMTYPE {
+    USERCAMPAIGN
+    NATIONALCAMPAIGN
+}
+
+enum appointmentsStatus {
+    new
+    seen
+    completed
+}
+
+
+model GivingPartners {
+    id              String              @id @default(uuid())
+    name            String
+    description     String
+    logo            String
+    url             String
+    ActivityField   String?
+    Headquarters    String?
+    type            GivingPartnersTypes @default(Government)
+    PartnershipType PartnershipType     @default(DonationSolutions)
+    createdAt       DateTime            @default(now())
+    updatedAt       DateTime            @updatedAt
+}
+
+model SupervisoryAuthorities {
+    id          String   @id @default(uuid())
+    name        String
+    description String
+    logo        String
+    url         String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+enum GivingPartnersTypes {
+    Government
+    Private
+}
+
+enum PartnershipType {
+    Strategic
+    Marketing
+    Supervisory
+    Sponsor
+    DonationSolutions
+}
+
+
+model AlgeriaCities {
+    id                    String                @id @default(uuid())
+    wilaya_code           String
+    wilaya_name           String
+    wilaya_name_ascii     String
+    daira_name            String
+    daira_name_ascii      String
+    commune_name          String
+    commune_name_ascii    String
+    // relations
+    donationOpportunities DonationOpportunity[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+
+model Notification {
+  id       String  @id @default(uuid())
+  title    String
+  body     String
+  link     String
+  screen   String?
+  metadata Json?
+  read     Boolean @default(false)
+
+  userId String
+  user   Users  @relation(fields: [userId], references: [id])
+
+  type           NotificationType           @default(INFO) // Default notification type
+  priority       NotificationPriority       @default(LOW) // Default notification priority
+  actionState    NotificationActionState    @default(PENDING) // Default action state
+  deliveryStatus NotificationDeliveryStatus @default(SENT) // Default delivery status
+  scope          NotificationScope          @default(USER) // Default scope
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum NotificationType {
+  INFO
+  ALERT
+  SUCCESS
+  ERROR
+  REMINDER
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NotificationActionState {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DISMISSED
+}
+
+enum NotificationDeliveryStatus {
+  SENT
+  DELIVERED
+  FAILED
+  VIEWED
+}
+
+enum NotificationScope {
+  USER
+  GROUP
+  GLOBAL
+}
+
+
+model Plan {
+    id            String         @id @default(uuid())
+    title         String // عنوان الباقة
+    description   String // وصف الباقة
+    price         Float // السعر الأساسي
+    features      feature[] // الميزات المتضمنة في الباقة
+    package       Package        @default(REGULAR)
+    for           Role?          @default(donor)
+    createdAt     DateTime       @default(now()) // وقت إنشاء الباقة
+    paymentLink   String? // رابط الدفعy
+    updatedAt     DateTime       @updatedAt // وقت التحديث الأخير
+    subscriptions Subscription[] // الاشتراكات المرتبطة بهذه الباقة
+}
+
+model feature {
+    id          String   @id @default(uuid())
+    title       String // عنوان الميزة
+    description String // وصف الميزة
+    planId      String
+    plan        Plan     @relation(fields: [planId], references: [id])
+    createdAt   DateTime @default(now()) // وقت إنشاء الميزة
+    updatedAt   DateTime @updatedAt // وقت التحديث الأخير
+}
+
+model Subscription {
+    id              String        @id @default(uuid())
+    userId          String        
+    user            Users         @relation(fields: [userId], references: [id])
+    planId          String // معرف الباقة المرتبطة
+    plan            Plan          @relation(fields: [planId], references: [id]) // العلاقة مع جدول الباقات
+    price           Float
+    discount        Float? // الخصم المطبق على الاشتراك (اختياري)
+    tax             Float? // الضرائب المطبقة على الاشتراك (اختياري)
+    totalPrice      Float // السعر الإجمالي بعد الخصم والضرائب
+    startDate       DateTime      @default(now())
+    endDate         DateTime      @map("end_date")
+    status          Status        @default(ACTIVE) // حالة الاشتراك
+    paymentDate     DateTime? // تاريخ الدفع
+    paymentMethod   PaymentMethod // طريقة الدفع
+    isRecurring     Boolean       @default(false) // اشتراك متكرر؟
+    isEdited        Boolean       @default(false) // تم تعديل الاشتراك؟
+    isTrial         Boolean       @default(false) // اشتراك تجريبي؟
+    billingCycle    BillingCycle  @default(YEARLY) // دورة الفوترة (شهري، سنوي)
+    maxUsersAllowed Int? // عدد المستخدمين المسموح بهم (للجمعيات)
+    renewalReminder Boolean       @default(false) // تذكير للتجديد
+    notes           String? // ملاحظات إضافية (اختيارية)
+    createdAt       DateTime      @default(now()) // وقت إنشاء الاشتراك
+    updatedAt       DateTime      @updatedAt // وقت التحديث الأخير
+}
+
+enum Package {
+    REGULAR
+    ADVANCED
+    PREMIUM
+}
+
+enum Status {
+    ACTIVE // الاشتراك نشط
+    EXPIRED // الاشتراك منتهي
+    CANCELED // الاشتراك ملغي
+    PENDING // الاشتراك في انتظار التأكيد
+}
+
+enum PaymentMethod {
+    CREDIT_CARD // بطاقة ائتمان
+    BANK_TRANSFER // تحويل بنكي
+    STRIPE // بايبال
+    CHARGILY // نقداً
+    OTHER // طريقة دفع أخرى
+}
+
+enum BillingCycle {
+    MONTHLY // دورة فوترة شهرية
+    QUARTERLY // دورة فوترة كل 3 أشهر
+    YEARLY // دورة فوترة سنوية
+}
+
+
+model Testimonial {
+    id        Int      @id @default(autoincrement()) // Primary key
+    grade     String // The grade or position of the person
+    comment   String // The testimonial comment
+    rating    Float? // The rating given by the person
+    createdAt DateTime @default(now()) // Timestamp when the testimonial is created
+   
+    user      Users?   @relation(fields: [userId], references: [id])
+    userId    String?  @unique
+}
+
+
+model HomeCarouselData {
+    id              String   @id @default(uuid())
+    title           String
+    description     String
+    backgroundImage String
+    silderImage     String?
+    actionBtnTitle  String
+    webLink         String
+    appLink         String
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+}
+
+
+model Image {
+    id           String    @id @default(uuid())
+    fieldname    String?
+    originalname String?
+    encoding     String?
+    mimetype     String?
+    destination  String?
+    filename     String?
+    path         String?
+    size         Int?
+    // related
+    userID       String?
+    campaignId   String?
+    campaign     Campaign? @relation(fields: [campaignId], references: [id])
+
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+
+    donations Donation[]
+    // fastDonation FastDonation?
+
+    rechrgeID String?
+    recharge  Recharge? @relation(fields: [rechrgeID], references: [id])
+
+    producID String?
+    product  Product? @relation(fields: [producID], references: [id])
+
+    charityID String?  @unique
+    charity   Charity? @relation(fields: [charityID], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+
+model File {
+    id           String    @id @default(uuid())
+    fieldname    String?
+    originalname String?
+    encoding     String?
+    mimetype     String?
+    destination  String?
+    filename     String?
+    path         String?
+    size         Int?
+    // related
+    userID       String?
+    campaignId   String?
+    campaign     Campaign? @relation(fields: [campaignId], references: [id])
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+
+    // Opposite FILE relations
+    registrationCertificateFile    LegalAndFinancialInfo? @relation("RegistrationCertificate")
+    financialReportFile            LegalAndFinancialInfo? @relation("FinancialReport")
+    annualReportFile               LegalAndFinancialInfo? @relation("AnnualReport")
+    foundingContractFile           AdditionalDocuments?   @relation("FoundingContract")
+    boardMembersFile               AdditionalDocuments?   @relation("BoardMembers")
+    additionalCertificatesFiles    AdditionalDocuments[]  @relation("AdditionalCertificates")
+    qualityCertificates            Product?
+    donationOpportunityPartnership DonationOpportunity?   @relation("PartnershipContract")
+    donationOpportunityApproval    DonationOpportunity?   @relation("ApprovalLetter")
+    // 
+    partnerLogo                    Partner?               @relation("PartnerLogo")
+}
+
+
+model Category {
+    id       String @id @default(uuid())
+    title    String
+    ar_title String
+
+    type      categoryType @default(Projects)
+    createdAt DateTime     @default(now())
+    updatedAt DateTime     @updatedAt
+
+    fieldId String
+    field   Field  @relation(fields: [fieldId], references: [id])
+
+    donationOpportunities DonationOpportunity[]
+    campaign              Campaign[]
+
+    // Subcategories (One-to-One Relationships)
+    Projects       Projects[]
+    Housing        Housing[]
+    Orphans        Orphans[]
+    Mosques        Mosques[]
+    Sonalgaz       Sonalgaz[]
+    Ade            Ade[]
+    Justice        Justice[]
+    DisasterRelief DisasterRelief[]
+}
+
+model Orphans {
+    id                 String    @id @default(uuid())
+    gender             String // ذكر؛ أنثى؛ مجموعة مختلطة ذكور وإناث
+    age                String?
+    orphanDuration     String? // مدة اليتم
+    schoolLevel        String? // المرحلة الدراسية
+    guardianName       String? // اسم الوصي
+    guardianPhone      String? // رقم هاتف الوصي
+    healthStatus       String? // الحالة الصحية
+    birthDate          DateTime? // تاريخ الميلاد
+    residence          String? // عنوان الإقامة
+    financialNeeds     Float? // الاحتياجات المالية الشهرية
+    psychologicalNeeds String? // الاحتياجات النفسية
+    educationSupport   String? // الدعم التعليمي المطلوب
+
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Mosques {
+    id                  String   @id @default(uuid())
+    wilaya              String? // الولاية
+    region              String? // المنطقة
+    requiredCare        String?
+    damageDegree        String?
+    googleMapUrl        String? // موقع المسجد على خرائط غوغل
+    imamName            String? // اسم الإمام
+    contactPhone        String? // رقم الهاتف للتواصل
+    constructionYear    Int? // سنة بناء المسجد
+    prayerCapacity      Int? // سعة المسجد (عدد المصلين)
+    electricityNeeds    Boolean? // الحاجة إلى كهرباء (نعم/لا)
+    waterAvailability   Boolean? // توفر الماء
+    maintenanceRequired String? // نوع الصيانة المطلوبة
+
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Projects {
+    id            String  @id @default(uuid())
+    gender        String?
+    maritalStatus String?
+
+    age              String?
+    numberOfChildren String?
+    specialNeeds     String?
+
+    categoryId  String
+    category    Category             @relation(fields: [categoryId], references: [id])
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Housing {
+    id            String  @id @default(uuid())
+    gender        String?
+    maritalStatus String?
+
+    age              String?
+    numberOfChildren String?
+
+    categoryId  String
+    category    Category             @relation(fields: [categoryId], references: [id])
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Sonalgaz {
+    id            String               @id @default(uuid())
+    gender        String?
+    maritalStatus String?
+    status        String?
+    categoryId    String
+    category      Category             @relation(fields: [categoryId], references: [id])
+    opportunity   DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Ade {
+    id            String               @id @default(uuid())
+    gender        String?
+    maritalStatus String?
+    status        String?
+    categoryId    String
+    category      Category             @relation(fields: [categoryId], references: [id])
+    opportunity   DonationOpportunity?
+    createdAt     DateTime             @default(now())
+    updatedAt     DateTime             @updatedAt
+}
+
+model Justice {
+    id            String  @id @default(uuid())
+    gender        String
+    maritalStatus String
+    age           String
+    casesNum      String
+    duration      String?
+
+    categoryId  String
+    category    Category             @relation(fields: [categoryId], references: [id])
+    opportunity DonationOpportunity?
+    createdAt   DateTime             @default(now())
+    updatedAt   DateTime             @updatedAt
+}
+
+model DisasterRelief {
+    id           String @id @default(uuid())
+    prisonRegion String
+    caseDetails  String
+    legalFees    String
+
+    categoryId  String
+    category    Category             @relation(fields: [categoryId], references: [id])
+    opportunity DonationOpportunity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// model Needs {
+//     id             String    @id @default(uuid())
+//     name           String
+//     ar_name        String
+//     createdAt      DateTime  @default(now())
+//     updatedAt      DateTime  @updatedAt
+//     MosqueCategory Mosques[]
+// }
+
+enum categoryType {
+    Projects // مشاريع عامة
+    Orphans // كفالة أيتام
+    Housing // السكن
+    Mosques // العناية بالمساجد
+    Sonalgaz // فواتير الكهرباء والغاز
+    Ade // شركة المياه
+    Justice // قضايا قضائية
+    Education // التعليم
+    Health // الصحة
+    Emergencies // حالات الطوارئ
+    Community // المبادرات المجتمعية
+    Environment // البيئة
+    Agriculture // الزراعة
+    Water // مشاريع المياه
+    FoodRelief // الإغاثة الغذائية
+    Scholarships // المنح الدراسية
+    Employment // التوظيف ودعم الأعمال
+    WomenEmpowerment // تمكين المرأة
+    DisabledSupport // دعم الأشخاص ذوي الإعاقة
+    DisasterRelief // الإغاثة في الكوارث
+    AnimalWelfare // رعاية الحيوانات
+    Technology // التكنولوجيا والابتكار
+    ArtsAndCulture // الفنون والثقافة
+    Sports // الرياضة
+    ElderlyCare // رعاية كبار السن
+    RuralDevelopment // تنمية المناطق الريفية
+}
+
+
+model SharedLinks {
+    id                    String               @id @default(uuid())
+    userId                String
+    user                  Users                @relation(fields: [userId], references: [id])
+    linkType              LinkType
+    platform              SocialPlatform
+    uniqueLink            String               @unique
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+    campaignId            String?
+    campaign              Campaign?            @relation(fields: [campaignId], references: [id])
+
+    donationCount    Int @default(0) // عدد التبرعات من الرابط
+    ambassadorPoints Int @default(0) // نقاط مشاركة (سفراء العطاء)
+    donationPoints   Int @default(0) // نقاط التبرعات
+
+    createdAt DateTime @default(now())
+}
+
+enum SocialPlatform {
+    FACEBOOK
+    TWITTER
+    INSTAGRAM
+    LINKEDIN
+    WHATSAPP
+    Other
+}
+
+
+model Users {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  googleId String? @unique
+  phone    String? @unique
+  name     String
+  age      String?
+
+  role               Role?
+  registrationStatus RegistrationStatus @default(CREATED)
+  isActive           Boolean            @default(true)
+  isVerified         Boolean            @default(false)
+  isVisible          Boolean            @default(true)
+  loggedDevices      LoggedDevice[]
+  trialEndDate       DateTime?
+  canCreateCampaign  Boolean            @default(true)
+  dateOfBirth        DateTime?
+
+  photo            String?
+  password         String?
+  verificationCode String?
+
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  numberOfDonations  Int   @default(0)
+  totalDonatedAmount Float @default(0.0)
+  currentBalance     Float @default(0.0)
+  ambassadorRank     Int?  @default(0)
+  topDonorRank       Int?  @default(0)
+
+  totalAmbassadorPoints      Int                @default(0)
+  redeemableAmbassadorPoints Int                @default(0)
+  ambassadorPoints           AmbassadorPoints[]
+  sharedLinks                SharedLinks[]
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastDonation DateTime? @default(now())
+
+  donationOpportunies DonationOpportunity[]
+  campaigns           Campaign[]
+  donations           Donation[]
+  recharges           Recharge[]
+  comments            Comment[]
+  likes               Like[]
+  charitiesShares     CharityShares[]
+  appointments        Appointments[]
+  zakat               Zakat[]
+  notifications       Notification[]
+  subscriptions       Subscription[]
+  testimonial         Testimonial?
+  fcmTokens           FcmTokens[] // Array of FCM tokens per user
+  address             Address?              @relation(fields: [addressId], references: [id])
+  addressId           String?               @unique
+
+  charity       Charity?     @relation(fields: [charityId], references: [id])
+  charityId     String?      @unique
+  partners      Partner?     @relation(fields: [partnerId], references: [id])
+  partnerId     String?      @unique
+  bloodAgency   BloodAgency? @relation(fields: [bloodAgencyID], references: [id])
+  bloodAgencyID String?      @unique
+}
+
+model FcmTokens {
+  id        String   @id @default(uuid())
+  token     String?
+  userId    String?
+  user      Users?   @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model AmbassadorPoints {
+  id               String   @id @default(uuid())
+  userId           String
+  user             Users    @relation(fields: [userId], references: [id])
+  totalPoints      Int      @default(0)
+  redeemablePoints Int      @default(0)
+  createdAt        DateTime @default(now())
+}
+
+model Donation {
+  id              String @id @default(uuid())
+  amount          Float
+  remainingAmount Float  @default(0)
+  usedBalance     Float  @default(0)
+  paymentMethod   String @default("")
+  quarter         Int    @default(0)
+
+  donationType          DonationTypes        @default(donationOpportunity)
+  donationOpportunityId String?
+  donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+
+  campaignId String?
+  campaign   Campaign? @relation(fields: [campaignId], references: [id])
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+
+  cartData Json?
+
+  screenShootId String?
+  screenShoot   Image?  @relation(fields: [screenShootId], references: [id])
+
+  userId String?
+  user   Users?  @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Recharge {
+  id          String   @id @default(uuid())
+  amount      Float
+  points      Float?
+  screenShoot Image[]
+  createdAt   DateTime @default(now())
+  userId      String
+  user        Users    @relation(fields: [userId], references: [id])
+}
+
+model LoggedDevice {
+  id        String   @id @default(uuid())
+  device    String
+  location  String
+  lastLogin DateTime @default(now())
+  userId    String
+  user      Users    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  visitor
+  charity
+  donor
+  partner
+  blood_agency
+}
+
+enum RegistrationStatus {
+  CREATED
+  VERIFIED
+  COMPLETED
+}
+
+enum DonationTypes {
+  cart
+  store
+  campaign
+  donationOpportunity
+  zakat
+  fastDonation
+}
+
+enum LinkType {
+  donationOpportunity
+  campaign
+}
+
+
+model ErrorLog {
+  id             String   @id @default(uuid())
+  message        String
+  stack          String   @default("")
+  additionalInfo String? // Optional field for additional information
+  timestamp      DateTime @default(now())
+}
+
+
+model DonationOpportunity {
+    id                  String                  @id @default(uuid())
+    title               String
+    type                donationOpportunityType @default(normalOpportunity)
+    status              opportunityStatus       @default(PENDING)
+    overview            String                  @db.Text
+    description         String
+    implementingPartner String                  @default("")
+    donationScoop       donationScoop           @default(OTHER)
+    lastDonation        DateTime?
+    totalDonation       String?
+    numOfBeneficiaries  Int                     @default(0)
+    donationCount       Int                     @default(0)
+    donationsType       donationsType?          @default(MONEY)
+    numberOfUnits       Int?
+    donatedUnits        Int?
+    unitPrice           Float?
+    cardImage           String                  @default("")
+    endAt               DateTime?
+    createdAt           DateTime                @default(now())
+    updatedAt           DateTime                @updatedAt
+    createdByuserId     String
+    user                Users                   @relation(fields: [createdByuserId], references: [id])
+
+    infoSectionsCards InfoSectionsCard[]
+    infoSections      InfoSection[]
+    donations         Donation[]
+    images            Image[]
+    visits            Visit[]
+    sharedLinks       SharedLinks[]
+
+    wilayaId String?
+    wilaya   AlgeriaCities? @relation(fields: [wilayaId], references: [id])
+
+    progress Progress? @relation
+
+    charityId String?  @unique
+    charity   Charity? @relation(fields: [charityId], references: [id])
+
+    fieldId String?
+    field   Field?  @relation(fields: [fieldId], references: [id])
+
+    categoryId String?
+    category   Category? @relation(fields: [categoryId], references: [id])
+
+    // New fields added based on the object
+    partner_role String?
+    partner_name String?
+
+    needs        String @default("") @db.Text
+    targetType   String @default("")
+    targetAmount String @default("")
+
+    proofFiles File[]
+
+    partnershipContractID String? @unique
+    partnershipContract   File?   @relation("PartnershipContract", fields: [partnershipContractID], references: [id])
+
+    approvalLetterID String? @unique
+    approvalLetter   File?   @relation("ApprovalLetter", fields: [approvalLetterID], references: [id])
+
+    commitmentTransparency Boolean @default(false)
+    commitmentReporting    Boolean @default(false)
+
+    daira   String? // To handle daira/commune data if necessary
+    commune String?
+
+    projectsID String?   @unique
+    Projects   Projects? @relation(fields: [projectsID], references: [id])
+
+    housingID String?  @unique
+    Housing   Housing? @relation(fields: [housingID], references: [id])
+
+    mosquesID String?  @unique
+    Mosques   Mosques? @relation(fields: [mosquesID], references: [id])
+
+    orphansID String?  @unique
+    Orphans   Orphans? @relation(fields: [orphansID], references: [id])
+
+    sonalgazID String?   @unique
+    Sonalgaz   Sonalgaz? @relation(fields: [sonalgazID], references: [id])
+
+    adeID String? @unique
+    Ade   Ade?    @relation(fields: [adeID], references: [id])
+
+    justiceID String?  @unique
+    Justice   Justice? @relation(fields: [justiceID], references: [id])
+
+    disasterReliefID String?         @unique
+    DisasterRelief   DisasterRelief? @relation(fields: [disasterReliefID], references: [id])
+}
+
+model Field {
+    id                    String                @id @default(uuid())
+    title                 String                @unique
+    ar_title              String                @unique
+    color                 String                @unique @default("#000000")
+    createdAt             DateTime              @default(now())
+    updatedAt             DateTime              @updatedAt
+    donationOpportunities DonationOpportunity[]
+    campaign              Campaign[]
+    categories            Category[]
+}
+
+model Progress {
+    id                    String               @id @default(uuid())
+    title                 String               @default("")
+    rate                  Float                @default(0)
+    requiredAmount        Int?
+    totalAmount           Int?
+    campaignId            String?              @unique
+    campaign              Campaign?            @relation(fields: [campaignId], references: [id])
+    donationOpportunityId String?              @unique
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+    createdAt             DateTime             @default(now())
+    updatedAt             DateTime             @updatedAt
+}
+
+model InfoSectionsCard {
+    id                    String               @id @default(uuid())
+    title                 String
+    show                  Boolean              @default(true)
+    image                 String
+    data                  String               @default("{}")
+    campaignId            String?
+    campaign              Campaign?            @relation(fields: [campaignId], references: [id])
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+    createdAt             DateTime             @default(now())
+    updatedAt             DateTime             @updatedAt
+}
+
+model InfoSection {
+    id                    String               @id @default(uuid())
+    title                 String?
+    show                  Boolean              @default(true)
+    infoBlocks            InfoBlock[]
+    campaignId            String?
+    campaign              Campaign?            @relation(fields: [campaignId], references: [id])
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+    createdAt             DateTime             @default(now())
+    updatedAt             DateTime             @updatedAt
+}
+
+model InfoBlock {
+    id            Int          @id @default(autoincrement())
+    title         String
+    subtitle      Int
+    show          Boolean      @default(true)
+    infoSectionId String?
+    infoSection   InfoSection? @relation(fields: [infoSectionId], references: [id])
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+}
+
+enum donationOpportunityType {
+    normalOpportunity
+    storeOpportunity
+}
+
+enum donationScoop {
+    EDUCATIONAL
+    SOCIAL
+    HEALTH
+    NUTRITION
+    HOUSING
+    RELIGIOUS
+    OTHER
+}
+
+enum opportunityStatus {
+    PENDING
+    ACTIVE
+    REJECTED
+}
+
+enum donationsType {
+    MONEY
+    GOODS
+}
+
+
+model Campaign {
+    // Identification
+    id    String @id @default(uuid())
+    title String
+
+    // Description
+    description String?   @db.Text
+    isAgreed    Boolean?  @default(false)
+    rejected    Boolean?  @default(false)
+    rejectedAt  DateTime?
+    rejectedBy  String?
+    rejectedWhy String?
+
+    // Donation Information
+    lastDonation DateTime?
+
+    numOfBeneficiaries Int? @default(0)
+
+    numberOfUnits Int? @default(0)
+
+    unitPrice Float? @default(0)
+
+    donatedUnits  Int? @default(0)
+    donationCount Int? @default(0)
+
+    // Campaign Status and Type
+    campaignStatus CampaignStatus @default(NOT_URGENT)
+    CampaignType   CampaignType   @default(MONEY)
+
+    // Financial Information
+    bankAccount String?
+
+    // Contact Information
+    email String?
+    name  String?
+    phone String?
+
+    // Payout Owner Information
+    ownerAddress String?
+    ownerEmail   String?
+    ownerPhone   String?
+    ownerID      String?
+    ownerName    String?
+
+    // Blood Donation Information
+    bloodBankName     String?
+    selectedBloodType bloodType?
+
+    // Location Information
+    googleMapLink String?
+    wilaya        String?
+    commune       Int?
+    daira         String?
+
+    // Media
+    cardImage String @default("")
+
+    // Relations
+    createdByuserId   String
+    user              Users              @relation(fields: [createdByuserId], references: [id])
+    infoSectionsCards InfoSectionsCard[]
+    infoSections      InfoSection[]
+    proofFiles        File[]
+    images            Image[]
+    donations         Donation[]
+    appointments      Appointments[]
+    visits            Visit[]
+    sharedLinks       SharedLinks[]
+
+    progress   Progress? @relation
+    fieldId    String?
+    field      Field?    @relation(fields: [fieldId], references: [id])
+    categoryId String?
+    category   Category? @relation(fields: [categoryId], references: [id])
+
+    // Timestamps
+    endAt     DateTime?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+}
+
+enum CampaignStatus {
+    ONGOING
+    URGENT
+    NOT_URGENT
+}
+
+enum CampaignType {
+    BLOOD
+    MONEY
+    GOODS
+}
+
+enum bloodType {
+    A_POSITIVE
+    A_NEGATIVE
+    B_POSITIVE
+    B_NEGATIVE
+    O_POSITIVE
+    O_NEGATIVE
+    AB_POSITIVE
+    AB_NEGATIVE
+}
+
+
+model Charity {
+    id                  String   @id @default(uuid())
+    legalName           String
+    commonName          String?
+    registrationNumber  String
+    establishmentDate   DateTime
+    registrationCountry String
+    organizationType    String
+    contactPerson       String
+    position            String?
+    logo                Image?
+    // Relations to Address
+    address             Address? @relation(fields: [addressId], references: [id])
+    addressId           String?  @unique
+
+    missionStatement      String
+    activitiesOverview    String
+    targetedBeneficiaries String
+    activityAreas         String
+    challenges            String?
+    goals                 String?
+
+    numOfBeneficiaries Int? @default(0)
+
+    // Relations to Legal and Financial Info
+    legalInfo   LegalAndFinancialInfo? @relation(fields: [legalInfoId], references: [id])
+    legalInfoId String?                @unique
+
+    // Relations to Bank Details
+    bankDetails   BankDetails? @relation(fields: [bankDetailsId], references: [id])
+    bankDetailsId String?      @unique
+
+    // Relations to Additional Documents
+    additionalDocuments   AdditionalDocuments? @relation(fields: [additionalDocumentsId], references: [id])
+    additionalDocumentsId String?              @unique
+
+    // Relations to Digital Presence
+    digitalPresence   DigitalPresence? @relation(fields: [digitalPresenceId], references: [id])
+    digitalPresenceId String?          @unique
+
+    // Relations to user
+    User                Users?
+    oppertunities       DonationOpportunity[]
+    incomes             Income[]
+    invoice             Invoice[]
+    expense             Expense[]
+    //
+    comments            Comment[] // Relation to the Comment model
+    likes               Like[] // Relation to the Like model
+    shares              CharityShares[]
+    // Step 2 fields
+    mainActivities      String?
+    majorAchievements   String?
+    mainGoals           String?
+    currentChallenges   String?
+    organizationalChart String?
+    financialManagement String?
+    aidDistribution     String?
+    partnershipPrograms Int?
+    volunteersCount     Int?
+    eventsCount         Int?
+
+    step2Completed Boolean @default(false) // Step 2 completion flag
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // FILE relations
+}
+
+model Address {
+    id         String  @id @default(uuid())
+    street     String?
+    city       String?
+    state      String?
+    postalCode String?
+    country    String?
+
+    // Relation back to Charity
+    charity     Charity?
+    bloodAgency BloodAgency?
+    user        Users?
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+}
+
+model LegalAndFinancialInfo {
+    id            String @id @default(uuid())
+    fundingSource String
+    taxID         String
+
+    // Relation back to Charity
+    charity Charity?
+
+    registrationCertificateFileId String? @unique
+    registrationCertificate       File?   @relation("RegistrationCertificate", fields: [registrationCertificateFileId], references: [id])
+
+    financialReportFileId String? @unique
+    financialReport       File?   @relation("FinancialReport", fields: [financialReportFileId], references: [id])
+
+    annualReportFileId String? @unique
+    annualReport       File?   @relation("AnnualReport", fields: [annualReportFileId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model BankDetails {
+    id            String  @id @default(uuid())
+    bankName      String
+    accountNumber String
+    IBAN          String?
+    SWIFT         String?
+    branchAddress String?
+
+    // Relation back to Charity
+    charity Charity?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model AdditionalDocuments {
+    id String @id @default(uuid())
+
+    // Relation back to Charity
+    charity Charity?
+
+    foundingContractFileId String? @unique
+    foundingContract       File?   @relation("FoundingContract", fields: [foundingContractFileId], references: [id])
+
+    boardMembersFileId String? @unique
+    boardMembers       File?   @relation("BoardMembers", fields: [boardMembersFileId], references: [id])
+
+    additionalCertificatesFileIds String?
+    additionalCertificates        File?   @relation("AdditionalCertificates", fields: [additionalCertificatesFileIds], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model DigitalPresence {
+    id        String  @id @default(uuid())
+    website   String?
+    facebook  String?
+    twitter   String?
+    linkedin  String?
+    instagram String?
+
+    // Relation back to Charity
+    charity Charity?
+    // 
+    partner Partner?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Comment {
+    id              String   @id @default(uuid())
+    text            String   @db.VarChar(255)
+    createdAt       DateTime @default(now())
+    charity         Charity  @relation(fields: [charityId], references: [id])
+    charityId       String
+    createdByUser   Users    @relation(fields: [createdByUserId], references: [id])
+    createdByUserId String
+
+    // @@map("comments") // Optional: Maps to a database table called "comments"
+}
+
+model Like {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+
+    charity   Charity @relation(fields: [charityId], references: [id])
+    charityId String
+
+    createdByUserId String
+    createdByUser   Users  @relation(fields: [createdByUserId], references: [id])
+
+    // @@map("likes") // Optional: Maps to a database table called "likes"
+}
+
+model CharityShares {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    link      String?
+
+    charity   Charity @relation(fields: [charityId], references: [id])
+    charityId String
+
+    createdByUserId String
+    createdByUser   Users  @relation(fields: [createdByUserId], references: [id])
+
+    // @@map("likes") // Optional: Maps to a database table called "likes"
+}
+
+
+model Partner {
+    id             String  @id @default(uuid())
+    step1Completed Boolean @default(false)
+
+    // Step 1: Basic Info
+    entityType   EntityType
+    fullName     String? // Only for individual
+    email        String
+    phone        String
+    businessType String
+    mainAddress  String
+    companyName  String? // Only for company
+
+    // Step 2: Contact Info
+    contactPerson String?
+    jobTitle      String?
+    position      String?
+    contactEmail  String?
+    contactPhone  String?
+
+    // Step 3: Registration and Licenses
+    registrationNumber String?
+    taxID              String?
+    licenses           String?
+
+    // Step 4: Payment Info
+    bankDetails            String?
+    acceptedPaymentMethods String?
+
+    // Step 5: Additional Info
+    logoId            String?          @unique
+    logo              File?            @relation("PartnerLogo", fields: [logoId], references: [id])
+    digitalPresenceId String?          @unique
+    digitalPresence   DigitalPresence? @relation(fields: [digitalPresenceId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    products Product[]
+    invoices SupplierInvoice[]
+    User     Users?
+}
+
+enum EntityType {
+    INDIVIDUAL
+    COMPANY
+}
+
+
+model BloodAgency {
+  id            String @id @default(uuid())
+  agencyName    String // Full name of the blood agency
+  officialEmail String @unique // Official email address
+  phone         String // Phone number
+
+  // Contact Information
+  contactPerson String // Name of the person managing the account
+  jobTitle      String? // Job title or position
+  contactEmail  String  @unique // Contact email
+  contactPhone  String // Contact phone number
+
+  // Relations to Address
+  address   Address? @relation(fields: [addressId], references: [id])
+  addressId String?  @unique
+
+  // Relations to nationl campain
+  nationlCampain NationalCampaign[]
+
+  // Relations to User
+  user Users?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NationalCampaign {
+  id           String @id @default(uuid())
+  campaignName String // Full name of the blood agency
+  willayaCode  String // Willaya code
+
+  targetUnit    Int // Target unit of blood to be collected
+  collectedUnit Int // Collected unit of blood
+  needyBlood    bloodType
+  locationLink  String // Location link of the campaign
+
+  // Relations to BloodAgency
+  bloodAgencyId String // Blood Agency ID
+  bloodAgency   BloodAgency @relation(fields: [bloodAgencyId], references: [id])
+
+  appointments        Appointments[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

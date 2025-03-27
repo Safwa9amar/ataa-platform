@@ -1,0 +1,12 @@
+// model FastDonation {
+//     id                   String               @id @default(uuid())
+//     field                String
+//     amount               Float
+//     paymentMethode       String
+//     email                String?
+//     donationOpprtunityId String?
+//     donationOpprtunity   DonationOpportunity? @relation(fields: [donationOpprtunityId], references: [id])
+//     // relations
+//     screenShootId        String?              @unique
+//     screenShoot          Image?               @relation(fields: [screenShootId], references: [id])
+// }

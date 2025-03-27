@@ -1,0 +1,181 @@
+model DonationOpportunity {
+    id                  String                  @id @default(uuid())
+    title               String
+    type                donationOpportunityType @default(normalOpportunity)
+    status              opportunityStatus       @default(PENDING)
+    overview            String                  @db.Text
+    description         String
+    implementingPartner String                  @default("")
+    donationScoop       donationScoop           @default(OTHER)
+    lastDonation        DateTime?
+    totalDonation       String?
+    numOfBeneficiaries  Int                     @default(0)
+    donationCount       Int                     @default(0)
+    donationsType       donationsType?          @default(MONEY)
+    numberOfUnits       Int?
+    donatedUnits        Int?
+    unitPrice           Float?
+    cardImage           String                  @default("")
+    endAt               DateTime?
+    createdAt           DateTime                @default(now())
+    updatedAt           DateTime                @updatedAt
+    createdByuserId     String
+    user                Users                   @relation(fields: [createdByuserId], references: [id])
+
+    infoSectionsCards InfoSectionsCard[]
+    infoSections      InfoSection[]
+    donations         Donation[]
+    images            Image[]
+    visits            Visit[]
+    sharedLinks       SharedLinks[]
+
+    wilayaId String?
+    wilaya   AlgeriaCities? @relation(fields: [wilayaId], references: [id])
+
+    progress Progress? @relation
+
+    charityId String?  @unique
+    charity   Charity? @relation(fields: [charityId], references: [id])
+
+    fieldId String?
+    field   Field?  @relation(fields: [fieldId], references: [id])
+
+    categoryId String?
+    category   Category? @relation(fields: [categoryId], references: [id])
+
+    // New fields added based on the object
+    partner_role String?
+    partner_name String?
+
+    needs        String @default("") @db.Text
+    targetType   String @default("")
+    targetAmount String @default("")
+
+    proofFiles File[]
+
+    partnershipContractID String? @unique
+    partnershipContract   File?   @relation("PartnershipContract", fields: [partnershipContractID], references: [id])
+
+    approvalLetterID String? @unique
+    approvalLetter   File?   @relation("ApprovalLetter", fields: [approvalLetterID], references: [id])
+
+    commitmentTransparency Boolean @default(false)
+    commitmentReporting    Boolean @default(false)
+
+    daira   String? // To handle daira/commune data if necessary
+    commune String?
+
+    projectsID String?   @unique
+    Projects   Projects? @relation(fields: [projectsID], references: [id])
+
+    housingID String?  @unique
+    Housing   Housing? @relation(fields: [housingID], references: [id])
+
+    mosquesID String?  @unique
+    Mosques   Mosques? @relation(fields: [mosquesID], references: [id])
+
+    orphansID String?  @unique
+    Orphans   Orphans? @relation(fields: [orphansID], references: [id])
+
+    sonalgazID String?   @unique
+    Sonalgaz   Sonalgaz? @relation(fields: [sonalgazID], references: [id])
+
+    adeID String? @unique
+    Ade   Ade?    @relation(fields: [adeID], references: [id])
+
+    justiceID String?  @unique
+    Justice   Justice? @relation(fields: [justiceID], references: [id])
+
+    disasterReliefID String?         @unique
+    DisasterRelief   DisasterRelief? @relation(fields: [disasterReliefID], references: [id])
+}
+
+model Field {
+    id                    String                @id @default(uuid())
+    title                 String                @unique
+    ar_title              String                @unique
+    color                 String                @unique @default("#000000")
+    createdAt             DateTime              @default(now())
+    updatedAt             DateTime              @updatedAt
+    donationOpportunities DonationOpportunity[]
+    campaign              Campaign[]
+    categories            Category[]
+}
+
+model Progress {
+    id                    String               @id @default(uuid())
+    title                 String               @default("")
+    rate                  Float                @default(0)
+    requiredAmount        Int?
+    totalAmount           Int?
+    campaignId            String?              @unique
+    campaign              Campaign?            @relation(fields: [campaignId], references: [id])
+    donationOpportunityId String?              @unique
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+    createdAt             DateTime             @default(now())
+    updatedAt             DateTime             @updatedAt
+}
+
+model InfoSectionsCard {
+    id                    String               @id @default(uuid())
+    title                 String
+    show                  Boolean              @default(true)
+    image                 String
+    data                  String               @default("{}")
+    campaignId            String?
+    campaign              Campaign?            @relation(fields: [campaignId], references: [id])
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+    createdAt             DateTime             @default(now())
+    updatedAt             DateTime             @updatedAt
+}
+
+model InfoSection {
+    id                    String               @id @default(uuid())
+    title                 String?
+    show                  Boolean              @default(true)
+    infoBlocks            InfoBlock[]
+    campaignId            String?
+    campaign              Campaign?            @relation(fields: [campaignId], references: [id])
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+    createdAt             DateTime             @default(now())
+    updatedAt             DateTime             @updatedAt
+}
+
+model InfoBlock {
+    id            Int          @id @default(autoincrement())
+    title         String
+    subtitle      Int
+    show          Boolean      @default(true)
+    infoSectionId String?
+    infoSection   InfoSection? @relation(fields: [infoSectionId], references: [id])
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+}
+
+enum donationOpportunityType {
+    normalOpportunity
+    storeOpportunity
+}
+
+enum donationScoop {
+    EDUCATIONAL
+    SOCIAL
+    HEALTH
+    NUTRITION
+    HOUSING
+    RELIGIOUS
+    OTHER
+}
+
+enum opportunityStatus {
+    PENDING
+    ACTIVE
+    REJECTED
+}
+
+enum donationsType {
+    MONEY
+    GOODS
+}

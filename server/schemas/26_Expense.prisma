@@ -1,0 +1,21 @@
+// schema.prisma
+
+enum ExpenseType {
+    OPERATIONAL
+    ADMINISTRATIVE
+    NON_OPERATIONAL
+}
+
+model Expense {
+    id            String      @id @default(uuid())
+    type          ExpenseType
+    amount        Float
+    paymentDate   DateTime
+    recipient     String
+    notes         String?
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+
+    charityId String // Relation to Charity model
+    charity   Charity @relation(fields: [charityId], references: [id])
+}

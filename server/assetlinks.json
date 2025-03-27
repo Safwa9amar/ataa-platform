@@ -1,0 +1,9 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "ataa",
+      "package_name": "com.ataa",
+      "sha256_cert_fingerprints":
+      ["7B:7A:66:84:4E:56:2F:9F:B6:AF:86:51:46:C3:F3:E4:51:20:72:56:45:84:3E:37:8E:EB:48:60:93:4B:35:D0"]
+    }
+  }]

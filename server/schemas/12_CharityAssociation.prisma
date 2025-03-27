@@ -1,0 +1,34 @@
+model CharityAssociation {
+  id           String    @id @default(uuid())
+  image        String // You might want to save the image path or URL here
+  name         String
+  country      String
+  description  String
+  shareCount   Int       @default(0)
+  commentCount Int       @default(0)
+  comments     Comment[] // Relation to the Comment model
+  likes        Like[] // Relation to the Like model
+}
+
+model Comment {
+  id              String             @id @default(uuid())
+  text            String             @db.VarChar(255)
+  createdAt       DateTime           @default(now())
+  charity         CharityAssociation @relation(fields: [charityId], references: [id])
+  charityId       String
+  createdByUser   Users              @relation(fields: [createdByUserId], references: [id])
+  createdByUserId String
+
+  // @@map("comments") // Optional: Maps to a database table called "comments"
+}
+
+model Like {
+  id              String             @id @default(uuid())
+  createdAt       DateTime           @default(now())
+  charity         CharityAssociation @relation(fields: [charityId], references: [id])
+  charityId       String
+  createdByUser   Users              @relation(fields: [createdByUserId], references: [id])
+  createdByUserId String
+
+  // @@map("likes") // Optional: Maps to a database table called "likes"
+}

@@ -1,0 +1,159 @@
+model Users {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  googleId String? @unique
+  phone    String? @unique
+  name     String
+  age      String?
+
+  role               Role?
+  registrationStatus RegistrationStatus @default(CREATED)
+  isActive           Boolean            @default(true)
+  isVerified         Boolean            @default(false)
+  isVisible          Boolean            @default(true)
+  loggedDevices      LoggedDevice[]
+  trialEndDate       DateTime?
+  canCreateCampaign  Boolean            @default(true)
+  dateOfBirth        DateTime?
+
+  photo            String?
+  password         String?
+  verificationCode String?
+
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  numberOfDonations  Int   @default(0)
+  totalDonatedAmount Float @default(0.0)
+  currentBalance     Float @default(0.0)
+  ambassadorRank     Int?  @default(0)
+  topDonorRank       Int?  @default(0)
+
+  totalAmbassadorPoints      Int                @default(0)
+  redeemableAmbassadorPoints Int                @default(0)
+  ambassadorPoints           AmbassadorPoints[]
+  sharedLinks                SharedLinks[]
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastDonation DateTime? @default(now())
+
+  donationOpportunies DonationOpportunity[]
+  campaigns           Campaign[]
+  donations           Donation[]
+  recharges           Recharge[]
+  comments            Comment[]
+  likes               Like[]
+  charitiesShares     CharityShares[]
+  appointments        Appointments[]
+  zakat               Zakat[]
+  notifications       Notification[]
+  subscriptions       Subscription[]
+  testimonial         Testimonial?
+  fcmTokens           FcmTokens[] // Array of FCM tokens per user
+  address             Address?              @relation(fields: [addressId], references: [id])
+  addressId           String?               @unique
+
+  charity       Charity?     @relation(fields: [charityId], references: [id])
+  charityId     String?      @unique
+  partners      Partner?     @relation(fields: [partnerId], references: [id])
+  partnerId     String?      @unique
+  bloodAgency   BloodAgency? @relation(fields: [bloodAgencyID], references: [id])
+  bloodAgencyID String?      @unique
+}
+
+model FcmTokens {
+  id        String   @id @default(uuid())
+  token     String?
+  userId    String?
+  user      Users?   @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model AmbassadorPoints {
+  id               String   @id @default(uuid())
+  userId           String
+  user             Users    @relation(fields: [userId], references: [id])
+  totalPoints      Int      @default(0)
+  redeemablePoints Int      @default(0)
+  createdAt        DateTime @default(now())
+}
+
+model Donation {
+  id              String @id @default(uuid())
+  amount          Float
+  remainingAmount Float  @default(0)
+  usedBalance     Float  @default(0)
+  paymentMethod   String @default("")
+  quarter         Int    @default(0)
+
+  donationType          DonationTypes        @default(donationOpportunity)
+  donationOpportunityId String?
+  donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+
+  campaignId String?
+  campaign   Campaign? @relation(fields: [campaignId], references: [id])
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+
+  cartData Json?
+
+  screenShootId String?
+  screenShoot   Image?  @relation(fields: [screenShootId], references: [id])
+
+  userId String?
+  user   Users?  @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Recharge {
+  id          String   @id @default(uuid())
+  amount      Float
+  points      Float?
+  screenShoot Image[]
+  createdAt   DateTime @default(now())
+  userId      String
+  user        Users    @relation(fields: [userId], references: [id])
+}
+
+model LoggedDevice {
+  id        String   @id @default(uuid())
+  device    String
+  location  String
+  lastLogin DateTime @default(now())
+  userId    String
+  user      Users    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  visitor
+  charity
+  donor
+  partner
+  blood_agency
+}
+
+enum RegistrationStatus {
+  CREATED
+  VERIFIED
+  COMPLETED
+}
+
+enum DonationTypes {
+  cart
+  store
+  campaign
+  donationOpportunity
+  zakat
+  fastDonation
+}
+
+enum LinkType {
+  donationOpportunity
+  campaign
+}

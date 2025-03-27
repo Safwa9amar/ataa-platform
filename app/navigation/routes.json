@@ -1,0 +1,91 @@
+{
+    "routes": [
+      {
+        "name": "التبرع السريع",
+        "path": "donation-quick",
+        "activeIcon" : "../assets/icons/FastdonationActive.png",
+        "inactiveIcon" : "../assets/icons/FastdonationInactive.png"
+      },
+      {
+        "name": "التبرع",
+        "path": "donation",
+        "activeIcon" : "../assets/icons/donationActive.png",
+        "inactiveIcon" : "../assets/icons/donationInactive.png"
+      },
+      {
+        "name": "حسابي",
+        "path": "account",
+        "activeIcon" : "../assets/icons/accountActive.png",
+        "inactiveIcon" : "../assets/icons/accountInactive.png"
+      },
+      {
+        "name": "برامجنا",
+        "path": "our-programs",
+        "activeIcon" : "../assets/icons/programeActive.png",
+        "inactiveIcon" : "../assets/icons/programeInactive.png"
+      },
+      {
+        "name": "الرئيسية",
+        "path": "home",
+        "activeIcon" : "../assets/icons/homeActive.png",
+        "inactiveIcon" : "../assets/icons/homeInactive.png"
+      },
+      {
+        "name": "عن عطاء",
+        "path": "about-donation"
+      },
+      {
+        "name": "اتصل بنا",
+        "path": "contact-us"
+      },
+      {
+        "name": "دليل التطبيق",
+        "path": "app-guide"
+      },
+      {
+        "name": "الاسئلة الشائعة",
+        "path": "faq"
+      },
+      {
+        "name": "سياسة الخصوصية",
+        "path": "privacy-policy"
+      },
+      {
+        "name": "الحملات",
+        "path": "campaigns"
+      },
+      {
+        "name": "الزكاة",
+        "path": "zakat"
+      },
+      {
+        "name": "حاسبة الزكاة",
+        "path": "zakat-calculator"
+      },
+      {
+        "name": "الاضاحي",
+        "path": "sacrifices"
+      },
+      {
+        "name": "التبرع بالدم",
+        "path": "blood-donation"
+      },
+      {
+        "name": "سفراء",
+        "path": "ambassadors"
+      },
+      {
+        "name": "السلة",
+        "path": "cart"
+      },
+      {
+        "name": "الفرص المحفوظة",
+        "path": "saved-opportunities"
+      },
+      {
+        "name": "متجر التبرع",
+        "path": "donation-store"
+      }
+    ]
+  }
+  

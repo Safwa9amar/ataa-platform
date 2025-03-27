@@ -1,0 +1,33 @@
+model File {
+    id           String    @id @default(uuid())
+    fieldname    String?
+    originalname String?
+    encoding     String?
+    mimetype     String?
+    destination  String?
+    filename     String?
+    path         String?
+    size         Int?
+    // related
+    userID       String?
+    campaignId   String?
+    campaign     Campaign? @relation(fields: [campaignId], references: [id])
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+
+    donationOpportunityId String?
+    donationOpportunity   DonationOpportunity? @relation(fields: [donationOpportunityId], references: [id])
+
+    // Opposite FILE relations
+    registrationCertificateFile    LegalAndFinancialInfo? @relation("RegistrationCertificate")
+    financialReportFile            LegalAndFinancialInfo? @relation("FinancialReport")
+    annualReportFile               LegalAndFinancialInfo? @relation("AnnualReport")
+    foundingContractFile           AdditionalDocuments?   @relation("FoundingContract")
+    boardMembersFile               AdditionalDocuments?   @relation("BoardMembers")
+    additionalCertificatesFiles    AdditionalDocuments[]  @relation("AdditionalCertificates")
+    qualityCertificates            Product?
+    donationOpportunityPartnership DonationOpportunity?   @relation("PartnershipContract")
+    donationOpportunityApproval    DonationOpportunity?   @relation("ApprovalLetter")
+    // 
+    partnerLogo                    Partner?               @relation("PartnerLogo")
+}

@@ -1,0 +1,23 @@
+// schema.prisma
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  UNPAID
+}
+
+model Invoice {
+  id                 String        @id @default(uuid())
+  invoiceNumber      String        @unique // Unique invoice number
+  paymentStatus      PaymentStatus @default(PENDING) // Payment status (PAID, PENDING, UNPAID)
+  issuerBeneficiary  String        // Issuer or beneficiary name
+  invoiceAmount      Float         // Amount of the invoice
+  issueDate          DateTime      // Date the invoice was issued
+  paymentDate        DateTime?     // Optional date when payment was made
+  notes              String?       // Additional notes
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  charityId          String        // Relation to charity model
+  charity            Charity       @relation(fields: [charityId], references: [id])
+}

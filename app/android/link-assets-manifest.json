@@ -1,0 +1,41 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/ElMessiri.ttf",
+      "sha1": "c0e225935901677fecbe48d3234cf7dae53b828e"
+    },
+    {
+      "path": "assets/fonts/FugazOne-Regular.ttf",
+      "sha1": "09d64ef3d7f00e5fea947f889388396b1bed7bc6"
+    },
+    {
+      "path": "assets/fonts/NotoNastaliqUrdu-VariableFont_wght.ttf",
+      "sha1": "cc260a81d8d6d2f2b4b5aac57c1a27c311569127"
+    },
+    {
+      "path": "assets/fonts/ReemKufi-Medium.ttf",
+      "sha1": "92dab97698f9a65e904194538a95322994cf3b13"
+    },
+    {
+      "path": "assets/fonts/SecularOne-Regular.ttf",
+      "sha1": "5c131245253d2942084a4b9c9b857952ef9248e6"
+    },
+    {
+      "path": "assets/fonts/static/ElMessiri-Bold.ttf",
+      "sha1": "3f998f03a24b315237d235b5bfb762f53b15c8d4"
+    },
+    {
+      "path": "assets/fonts/static/ElMessiri-Medium.ttf",
+      "sha1": "ab48ee557014fc3cbc56bfa966d5008c471c0617"
+    },
+    {
+      "path": "assets/fonts/static/ElMessiri-Regular.ttf",
+      "sha1": "9cefd3b0a4ae95a9143972655fdba0e9aea22eef"
+    },
+    {
+      "path": "assets/fonts/static/ElMessiri-SemiBold.ttf",
+      "sha1": "2c50820b88aca9abeb20aba06dea42a2e4b793a1"
+    }
+  ]
+}

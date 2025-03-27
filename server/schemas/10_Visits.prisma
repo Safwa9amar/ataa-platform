@@ -1,0 +1,15 @@
+model Visit {
+    id        String   @id @default(uuid())
+    ipAddress String
+    userAgent String
+    visitedAt DateTime @default(now())
+
+    // relations
+    campiagnId String?
+    campaign   Campaign? @relation(fields: [campiagnId], references: [id])
+
+    donationOppertunityID String?
+    donationOppertunity   DonationOpportunity? @relation(fields: [donationOppertunityID], references: [id])
+
+    // @@unique([ipAddress, userAgent, campiagnId, donationOppertunityID])
+}

@@ -1,0 +1,32 @@
+[
+    {
+      "donationType": "project",
+      "ar_name": "مشاريع",
+      "data": [
+        { "ar_name": "مشاريع عامة", "name": "general-projects" },
+        { "ar_name": "اسكان", "name": "housing" },
+        { "ar_name": "كفالة ايتام", "name": "orphan-sponsorship" },
+        { "ar_name": "العناية بالمساجد", "name": "mosque-care" }
+      ]
+    },
+    {
+      "donationType": "tayasart",
+      "ar_name": "تيسرت",
+      "data": [
+        { "ar_name": "فواتير الكهرباء والغاز", "name": "electricity-and-gas-bills" },
+        { "ar_name": "فواتير المياه", "name": "water-bills" },
+        { "ar_name": "التنفيذ القضائي", "name": "judicial-execution" }
+      ]
+    },
+    {
+      "donationType": "forejat",
+      "ar_name": "فرجت",
+      "data": []
+    },
+    {
+      "donationType": "ighatha",
+      "ar_name": "اغاثة",
+      "data": []
+    }
+]
+  

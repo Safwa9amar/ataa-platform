@@ -1,0 +1,47 @@
+model Partner {
+    id             String  @id @default(uuid())
+    step1Completed Boolean @default(false)
+
+    // Step 1: Basic Info
+    entityType   EntityType
+    fullName     String? // Only for individual
+    email        String
+    phone        String
+    businessType String
+    mainAddress  String
+    companyName  String? // Only for company
+
+    // Step 2: Contact Info
+    contactPerson String?
+    jobTitle      String?
+    position      String?
+    contactEmail  String?
+    contactPhone  String?
+
+    // Step 3: Registration and Licenses
+    registrationNumber String?
+    taxID              String?
+    licenses           String?
+
+    // Step 4: Payment Info
+    bankDetails            String?
+    acceptedPaymentMethods String?
+
+    // Step 5: Additional Info
+    logoId            String?          @unique
+    logo              File?            @relation("PartnerLogo", fields: [logoId], references: [id])
+    digitalPresenceId String?          @unique
+    digitalPresence   DigitalPresence? @relation(fields: [digitalPresenceId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    products Product[]
+    invoices SupplierInvoice[]
+    User     Users?
+}
+
+enum EntityType {
+    INDIVIDUAL
+    COMPANY
+}

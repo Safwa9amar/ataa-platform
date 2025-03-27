@@ -1,0 +1,7 @@
+model ErrorLog {
+  id             String   @id @default(uuid())
+  message        String
+  stack          String   @default("")
+  additionalInfo String? // Optional field for additional information
+  timestamp      DateTime @default(now())
+}
