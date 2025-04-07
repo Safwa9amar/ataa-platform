@@ -1,10 +1,12 @@
 // src/app.js
+require('dotenv').config();
 const express = require("express");
 const setupMiddleware = require("./middlewares/setupMiddleware");
 const setupMailer = require("./utils/mailer");
 const apiRouter = require("./routers/apiRouter");
 const path = require("path");
 const app = express();
+
 const setupSocketHandlers = require("./socketHandlers");
 const useragent = require("express-useragent");
 // Setup middlewares\

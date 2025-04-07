@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  swcMinify: true,
   images: {
     remotePatterns: [
       {
@@ -12,6 +13,10 @@ const nextConfig = {
         hostname: "**",
       },
     ],
+  },
+  webpack: (config) => {
+    config.optimization.splitChunks = { chunks: "all" };
+    return config;
   },
 };
 

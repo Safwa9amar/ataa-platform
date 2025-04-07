@@ -5,6 +5,7 @@ const handleTrialAccounts = require("./tasks/trialEndDateSchedule");
 const server = require("./app");
 const port = process.env.PORT || 5500;
 // Start Server with Scheduled Tasks
+
 server.listen(port, async () => {
   try {
     await cleanupUnverifiedAccounts();

@@ -80,11 +80,10 @@ function MultiStepForm() {
 
   // Validate and move to next step
   const nextStep = async () => {
-    const fieldsToValidate = stepValidationFields[step];
+    const fieldsToValidate = stepValidationFields()[step];
 
     if (fieldsToValidate.length > 0) {
       const isValid = await methods.trigger(fieldsToValidate);
-      console.log(isValid);
       if (!isValid) return;
     }
 

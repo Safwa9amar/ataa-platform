@@ -7,7 +7,6 @@ const cron = require("node-cron");
 const uploadDirectory = path.join("./uploads");
 
 const cleanupOrphanedFiles = async () => {
-  return "";
   try {
     // Get all files in the upload directory
     const filesInDirectory = fs.readdirSync("./uploads");

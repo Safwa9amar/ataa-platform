@@ -34,7 +34,9 @@ export const FieldCategoryProvider = ({ children }) => {
     setLoading(true);
     try {
       const data = await getFieldById(selectedField, userToken);
-      setCategories(data.categories);
+      if (data.categories) {
+        setCategories(data.categories);
+      }
     } catch (error) {
       setCategories([]);
       console.error("Error fetching categories:", error);

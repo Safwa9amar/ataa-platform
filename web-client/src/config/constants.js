@@ -17,7 +17,7 @@ const CONSTANTS = {
     COMPLETED: "COMPLETED", // جميع البيانات مكتملة
   },
   subcategoryMap: {
-    Projects: [
+    Project: [
       {
         type: "select",
         name: "gender",
@@ -57,7 +57,7 @@ const CONSTANTS = {
         ],
       },
     ],
-    Housing: [
+    iskan: [
       {
         type: "select",
         name: "gender",
@@ -89,7 +89,7 @@ const CONSTANTS = {
         label: "عدد الابناء",
       },
     ],
-    Orphans: [
+    kafalat: [
       {
         type: "select",
         name: "gender",
@@ -145,7 +145,7 @@ const CONSTANTS = {
         ],
       },
     ],
-    Mosques: [
+    masajed: [
       {
         type: "select",
         label: "العناية المطلوبة",
@@ -166,7 +166,7 @@ const CONSTANTS = {
         ],
       },
     ],
-    Justice: [
+    justice: [
       {
         type: "select",
         name: "gender",
@@ -221,7 +221,7 @@ const CONSTANTS = {
       },
     ],
 
-    Sonalgaz: [
+    sonalgaz: [
       {
         type: "select",
         name: "gender",
@@ -251,7 +251,7 @@ const CONSTANTS = {
         ],
       },
     ],
-    Ade: [
+    ade: [
       {
         type: "select",
         name: "gender",

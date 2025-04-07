@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NEXT_PRIVATE_TURBOPACK=true next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -26,7 +26,7 @@
     "lightgallery": "^2.8.2",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
-    "next": "14.2.14",
+    "next": "^15.2.4",
     "npm": "^11.1.0",
     "numbro": "^2.5.0",
     "react": "^18",
