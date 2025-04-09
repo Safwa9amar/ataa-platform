@@ -22,6 +22,29 @@ function OrphanStatisticsGrid({ data }) {
     { label: "عدد الزيارات", value: data?.visits },
     { label: "اخر عملية تبرع", value: lastDonation },
     {
+          label: "",
+          value: (
+            <div className="flex flex-col items-center gap-2">
+              <CircularProgressbar
+                className="w-20 h-20"
+                styles={buildStyles({
+                  pathColor: "cayan",
+                  trailColor: "#EFE",
+                  textColor: "white",
+                })}
+                value={Math.floor(data?.progress.rate)}
+                text={`${Math.floor(data?.progress.rate)}%`}
+                strokeWidth={3}
+              />
+              <p className="text-xs">تم جمع : {data?.progress.totalAmount} دج </p>
+              <p className="text-xs">
+                متبقي : {data?.progress.requiredAmount - data?.progress.totalAmount}{" "}
+                دج
+              </p>
+            </div>
+          ),
+        },
+    {
       label: "تم التكقل به لمدة",
       value: duration.duration + " " + duration.period,
     },

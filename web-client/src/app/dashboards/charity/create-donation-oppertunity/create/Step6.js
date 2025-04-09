@@ -8,7 +8,7 @@ import { Typography } from "@material-tailwind/react";
 import useFileUpload from "@/hooks/useFileUpload";
 import FileDisplay from "@/components/UI/FileDisplay";
 
-export default function Step5() {
+export default function Step6() {
   const {
     setValue,
     watch,
@@ -17,7 +17,7 @@ export default function Step5() {
   } = useFormContext();
   const { uploadFile, uploadedFile, uploadProgress, loading, setShowToast } =
     useFileUpload();
-  const proofFiles = watch("proofFiles");
+  const proofFiles = watch("proofFiles") || [];
 
   const handlePickFile = async (files) => {
     if (!files || files.length === 0) {
@@ -65,9 +65,9 @@ export default function Step5() {
       className="m-10"
     >
       <Typography className="text-center" variant="lead">
-        وثائق اثبات الحملة
+        وثائق التحقق
       </Typography>
-
+    
       <div className="flex flex-col items-center gap-4">
         <Controller
           control={control}
@@ -144,6 +144,67 @@ export default function Step5() {
           </AnimatePresence>
         </div>
       </div>
+
+      <div className="max-w-2xl mx-auto m-5 p-4 bg-mangoBlack rounded-lg shadow-md">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          خطة عمل أو دراسة جدوى : إذا كان المشروع المرد تنفيذه يصنف من المشاريع
+          الكبرى يرجى إرفاق ملف pdf حول كيفية تنفيذ المشروع، المراحل الزمنية،
+          الموارد المطلوبة، تقارير ميدانية توضح الحاجة أو المشاكل التي سيتم
+          معالجتها من خلال المشروع، والمخاطر المحتملة...إلخ
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          إثبات ملكية أو تصريح استخدام الأرض أو المبنى : إذا كانت الفرصة تتعلق
+          بمشروع بناء أو تطوير مثل المنازل أو المساجد. ، فإن إثبات ملكية الأرض
+          أو تصريح استخدامها ضروري لضمان قانونية المشروع.
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          التراخيص الطبية: إذا كانت الفرصة تتعلق بتقديم خدمات طبية (عمليات
+          جراحية، تصفية دم، العلاج بالكيماوي...إلخ) يرجى إرفاق أي تراخيص متوفرة
+          للأطباء أو المستشفيات المشاركة في المشروع.
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          - وصفات الدواء: إذا كانت الفرصة تتعلق بشراء أدوية يرجى إرفاق الوصفة
+          الطبية
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          * فرص تيسرت : - إثبات الديون: يرجى إرفاق وثائق تثبت وجود الديون
+          المستحقة على المستفيدين لضمان الشفافية
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1 }}
+        >
+          * فرص فرجت :- إثبات الحكم القضائي : يرجى إرفاق الوثيقة التي تأكد الحكم
+          القضائي و توضح سببه
+        </motion.p>
+      </div>
+
     </motion.div>
   );
 }

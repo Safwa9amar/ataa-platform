@@ -83,6 +83,10 @@ textarea {
   border-color: var(--borderColor);
   outline: var(--borderColor);
 }
+
+textarea {
+  field-sizing:  content !important;
+}
 p {
   direction: rtl;
 }

@@ -69,7 +69,7 @@ function HeaderSection({ data }) {
         </div>
       </div>
       <div
-        className={`hidden  absolute -bottom-14 w-1/2 h-1/4 md:grid grid-flow-col-dense gap-2`}
+        className={`hidden  absolute -bottom-14 w-3/4 h-1/4 md:grid grid-flow-col-dense gap-2`}
       >
         <StatisticsGrid lastDonation={lastDonation} data={data} />
       </div>

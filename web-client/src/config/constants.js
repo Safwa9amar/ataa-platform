@@ -40,7 +40,8 @@ const CONSTANTS = {
       {
         type: "text",
         name: "age",
-        label: "العمر",
+        label: "",
+        label: "العمر (في حالة كانت مجموعة يرجى تحديد المجال  مثلا (1-10) ",  // هذا الحقل لا يظهر في الموقع
       },
       {
         type: "number",
@@ -81,7 +82,7 @@ const CONSTANTS = {
       {
         type: "text",
         name: "age",
-        label: "العمر",
+        label: "العمر (في حالة كانت مجموعة يرجى تحديد المجال  مثلا (1-10) ",  // هذا الحقل لا يظهر في الموقع
       },
       {
         type: "number",
@@ -101,9 +102,9 @@ const CONSTANTS = {
         ],
       },
       {
-        type: "number",
+        type: "text",
         name: "age",
-        label: "العمر",
+        label: "العمر (في حالة كانت مجموعة يرجى تحديد المجال  مثلا (1-10) ",  // هذا الحقل لا يظهر في الموقع
       },
 
       {
@@ -188,7 +189,7 @@ const CONSTANTS = {
       },
 
       {
-        type: "number",
+        type: "text",
         name: "age",
         label: "العمر",
       },

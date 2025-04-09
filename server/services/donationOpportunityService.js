@@ -4,6 +4,7 @@ exports.getAllDonationOpportunities = async (req, res) => {
   const field = req.params.field;
   const category = req.params.category;
   const { filterData, keywords, rate } = req.body;
+
   let categoryFilter = {};
   filterData &&
     Object.entries(filterData).forEach(([key, value]) => {
@@ -177,9 +178,6 @@ exports.createDonationOpportunity = async (data, user) => {
     // Construct additional connection data for the donation opportunity
     const categoryConnections = createdCategory
       ? {
-          category: {
-            connect: { id: createdCategory.categoryId },
-          },
           [catType]: {
             connect: { id: createdCategory.id },
           },
@@ -238,7 +236,10 @@ exports.createDonationOpportunity = async (data, user) => {
         field: {
           connect: { id: field },
         },
-        ...categoryConnections,
+        category: {
+          connect: { id: category },
+        },
+        // ...categoryConnections,
       },
     });
   } catch (error) {
@@ -261,10 +262,11 @@ exports.updateDonationOpportunity = async (id, data) => {
 // Update a donation opportunity by ID
 exports.getMyDonationOpportunities = async (userId, params) => {
   const { status, keywords } = params;
-  console.log(String(status).toUpperCase());
-
   try {
     return await prisma.donationOpportunity.findMany({
+      orderBy : {
+        createdAt: 'desc'
+      },
       where: {
         user: {
           id: userId,

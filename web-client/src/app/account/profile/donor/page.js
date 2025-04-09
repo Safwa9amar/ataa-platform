@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Card,
@@ -7,52 +8,48 @@ import {
   Button,
   Checkbox,
 } from "@material-tailwind/react";
+import { useForm } from "react-hook-form";
 import { useCredentials } from "@/context/CredentialsContext";
-import { getLoggedDevices } from "@/services/loggedDeviceService";
 
 export default function AccountInfo() {
-  const { user, updateUser, loading, userToken } = useCredentials(); // Integrated `updateUser` and `loading`
-  const [formData, setFormData] = useState({
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
+  const { user, updateUser, loading } = useCredentials();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { isDirty },
+  } = useForm({
+    defaultValues: {
+      name: user?.name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      isVisible: user?.isVisible || false,
+    },
   });
 
-  const [originalData, setOriginalData] = useState(formData); // To track original values for canceling changes
-  const [isEditing, setIsEditing] = useState(false);
-  const [lastLoginDevices, setLastLoginDevices] = useState([]); // State to hold last login devices data
+  useEffect(() => {
+    reset({
+      name: user?.name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      isVisible: user?.isVisible || false,
+    });
+  }, [user, reset]);
 
-  // Handle input change for editable fields
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // Handle direct update of the user data without a form submission
-  const handleUpdate = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Call updateUser directly to save the changes immediately
-    const updatedData = { ...formData, [field]: value };
-    updateUser(updatedData); // Assuming `updateUser` directly updates user data
-  };
-
-  // Reset form data to the original values when canceling edit
-  const handleCancel = () => {
-    setFormData(originalData);
+  const onSubmit = (data) => {
+    updateUser(data);
     setIsEditing(false);
   };
 
-  // Set the original data when the user information is loaded
-  useEffect(() => {
-    setOriginalData(formData); // Update original data when user info changes
-  }, [user]);
+  const handleCancel = () => {
+    reset();
+    setIsEditing(false);
+  };
+
+  const isVisibleChecked = watch("isVisible");
 
   return (
     <Card
@@ -66,23 +63,20 @@ export default function AccountInfo() {
         معلومات الحساب
       </Typography>
 
-      {/* Account Information Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Full Name */}
         <div>
-          <Typography className="text-xs sm:text-sm md:text-base font-medium text-gray-500 dark:text-gray-400">
+          <Typography className="text-xs font-medium text-gray-500 dark:text-gray-400">
             الاسم الكامل
           </Typography>
           {isEditing ? (
             <Input
-              name="name"
-              value={formData.name}
-              onChange={(e) => handleInputChange(e)}
+              {...register("name")}
               className="mt-2"
-              disabled={loading} // Disable input during loading
+              disabled={loading}
             />
           ) : (
-            <Typography className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 dark:text-gray-200">
+            <Typography className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-2">
               {user.name}
             </Typography>
           )}
@@ -90,20 +84,18 @@ export default function AccountInfo() {
 
         {/* Email */}
         <div>
-          <Typography className="text-xs sm:text-sm md:text-base font-medium text-gray-500 dark:text-gray-400">
+          <Typography className="text-xs font-medium text-gray-500 dark:text-gray-400">
             البريد الإلكتروني
           </Typography>
           {isEditing ? (
             <Input
-              name="email"
               type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange(e)}
+              {...register("email")}
               className="mt-2"
-              disabled={loading} // Disable input during loading
+              disabled={loading}
             />
           ) : (
-            <Typography className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 dark:text-gray-200">
+            <Typography className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-2">
               {user.email}
             </Typography>
           )}
@@ -111,87 +103,71 @@ export default function AccountInfo() {
 
         {/* Phone */}
         <div>
-          <Typography className="text-xs sm:text-sm md:text-base font-medium text-gray-500 dark:text-gray-400">
+          <Typography className="text-xs font-medium text-gray-500 dark:text-gray-400">
             رقم الهاتف
           </Typography>
           {isEditing ? (
             <Input
-              name="phone"
-              value={formData.phone}
-              onChange={(e) => handleInputChange(e)}
+              {...register("phone")}
               className="mt-2"
-              disabled={loading} // Disable input during loading
+              disabled={loading}
             />
           ) : (
-            <Typography className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 dark:text-gray-200">
+            <Typography className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-2">
               {user.phone}
             </Typography>
           )}
         </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="mt-8 flex gap-4">
-        {isEditing ? (
-          <>
+        {/* isVisible */}
+        <div>
+          <Typography className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            عرض حسابي في كبار المحسنين
+          </Typography>
+          {isEditing ? (
+            <label className="mt-2 flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                {...register("isVisible")}
+                className="form-checkbox rounded border-gray-300 text-primaryColor"
+                defaultChecked={user?.isVisible}
+              />
+              <span className="text-sm text-gray-700 dark:text-gray-200">
+                مرئي
+              </span>
+            </label>
+          ) : (
+            <Typography className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-2">
+              {user.isVisible ? "مرئي" : "غير مرئي"}
+            </Typography>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="sm:col-span-2 flex gap-4 mt-6">
+          {isEditing ? (
+            <>
+              <Button
+                type="submit"
+                className="bg-primaryColor text-white shadow-md"
+                disabled={loading || !isDirty}
+              >
+                حفظ التغييرات
+              </Button>
+              <Button type="button" variant="outlined" onClick={handleCancel}>
+                إلغاء
+              </Button>
+            </>
+          ) : (
             <Button
               type="button"
               className="bg-primaryColor text-white shadow-md"
-              disabled={loading} // Disable button during loading
-              onClick={() => updateUser(formData)} // Save changes on click
+              onClick={() => setIsEditing(true)}
             >
-              حفظ التغييرات
+              تعديل المعلومات
             </Button>
-            <Button
-              type="button"
-              variant="outlined"
-              onClick={handleCancel} // Cancel changes on click
-            >
-              إلغاء
-            </Button>
-          </>
-        ) : (
-          <Button
-            type="button"
-            onClick={() => setIsEditing(true)} // Enable edit mode
-            className="bg-primaryColor text-white shadow-md"
-          >
-            تعديل المعلومات
-          </Button>
-        )}
-      </div>
-
-      {/* Last Login Devices Section */}
-      {/* <div className="mt-8">
-        <Typography className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-          الأجهزة الأخيرة التي تم تسجيل الدخول منها
-        </Typography>
-
-        {lastLoginDevices.length > 0 ? (
-          <Table>
-            <thead>
-              <tr>
-                <th className="text-xs sm:text-sm">الجهاز</th>
-                <th className="text-xs sm:text-sm">الموقع</th>
-                <th className="text-xs sm:text-sm">آخر تسجيل دخول</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lastLoginDevices.map((device, index) => (
-                <tr key={index}>
-                  <td className="text-xs sm:text-sm">{device.device}</td>
-                  <td className="text-xs sm:text-sm">{device.location}</td>
-                  <td className="text-xs sm:text-sm">{device.lastLogin}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          <Typography className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
-            لم يتم العثور على أي أجهزة مسجلة دخول.
-          </Typography>
-        )}
-      </div> */}
+          )}
+        </div>
+      </form>
     </Card>
   );
 }

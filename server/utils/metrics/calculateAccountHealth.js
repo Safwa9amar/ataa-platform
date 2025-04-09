@@ -43,7 +43,7 @@ module.exports = function calculateAccountHealth(data) {
     _growthRate,
     _updateFrequency
   );
-
+  
   const _retentionRate = retentionRate(previousDonors, returningDonors);
 
   return {

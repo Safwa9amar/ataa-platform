@@ -8,7 +8,7 @@ import { Typography } from "@material-tailwind/react";
 import useImageUpload from "@/hooks/useImageUpload";
 import API_ENDPOINTS from "@/config/apiEndPoints";
 
-export default function Step4() {
+export default function Step5() {
   const {
     formState: { errors },
     setValue,
@@ -23,7 +23,7 @@ export default function Step4() {
     deleteImageFromServer,
     setShowToast,
   } = useImageUpload();
-  const images = watch("images");
+  const images = watch("images") || [];
 
   const handlePickImages = async (files) => {
     if (!files || files.length === 0) return;
@@ -72,7 +72,7 @@ export default function Step4() {
           name="images"
           rules={{
             validate: (value) =>
-              value?.length >= 4 || "يجب تحميل 4 صور على الأقل.",
+              value?.length >= 1 || "صور الفرصة يجب أن تكون أكثر من صورة",      
           }}
           render={({ field }) => (
             <FileUploader

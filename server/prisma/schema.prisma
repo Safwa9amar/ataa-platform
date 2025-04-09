@@ -322,6 +322,18 @@ enum appointmentsStatus {
 }
 
 
+model CharityAssociation {
+  id           String    @id @default(uuid())
+  image        String // You might want to save the image path or URL here
+  name         String
+  country      String
+  description  String
+  shareCount   Int       @default(0)
+  commentCount Int       @default(0)
+}
+
+
+
 model GivingPartners {
     id              String              @id @default(uuid())
     name            String
@@ -1183,6 +1195,7 @@ enum opportunityStatus {
     PENDING
     ACTIVE
     REJECTED
+    COMPLETED
 }
 
 enum donationsType {

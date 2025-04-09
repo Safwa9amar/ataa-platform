@@ -51,7 +51,7 @@ export default function Step2() {
 
   return (
     <motion.div
-      className="space-y-6 grid grid-cols-[minmax(500px,780px)] mx-auto"
+      className="space-y-6 grid grid-cols-[minmax(500px,680px)] mx-auto"
       dir="rtl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}

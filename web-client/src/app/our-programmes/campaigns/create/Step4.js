@@ -72,7 +72,7 @@ export default function Step4() {
           name="images"
           rules={{
             validate: (value) =>
-              value?.length >= 4 || "يجب تحميل 4 صور على الأقل.",
+              value?.length >= 1 || "يجب تحميل صور الحملة.",
           }}
           render={({ field }) => (
             <FileUploader

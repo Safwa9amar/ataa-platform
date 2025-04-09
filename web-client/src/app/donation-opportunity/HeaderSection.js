@@ -16,8 +16,9 @@ function HeaderSection({ data }) {
   const { openShareModal } = useShare();
   const searchParams = useSearchParams();
   const sharingSource = searchParams.get("source");
+  
+  const isOrphan = data?.category?.title === "kafalat";
 
-  let isOrphan = data.category.title === "kafalat";
 
   const fetchDonationReport = async () => {
     try {
@@ -132,7 +133,7 @@ function HeaderSection({ data }) {
         </div>
       </div>
       <div
-        className={`hidden  absolute -bottom-14 w-1/2 h-1/4 md:grid grid-flow-col-dense gap-2`}
+        className={`hidden  absolute -bottom-14 w-3/4 h-1/4 md:grid grid-flow-col-dense gap-2`}
       >
         <DynamiqueStatisticsGrid lastDonation={lastDonation} data={data} />
       </div>

@@ -7,6 +7,7 @@ import { useFieldCategoryContext } from "@/context/FieldCategoryContext";
 export default function Step1() {
   const {
     watch,
+    setValue,
     register,
     formState: { errors },
   } = useFormContext();
@@ -23,6 +24,10 @@ export default function Step1() {
   useEffect(() => {
     setSelectedField(field);
   }, [field]);
+
+  useEffect(()=>{
+    setValue("subCategory", subCategory);
+  },[ subCategory])
 
   const renderField = (field) => {
     switch (field.type) {
@@ -169,6 +174,9 @@ export default function Step1() {
             ))}
           </motion.select>
         )}
+        {errors.category && (
+          <p className="text-red-500 text-sm">{errors.category.message}</p>
+        )}  
       </AnimatePresence>
 
       <motion.select

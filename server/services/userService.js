@@ -77,6 +77,7 @@ async function createUser(userData) {
 async function updateUser(id, userData, file) {
   const { name, password, phone, isVisible } = userData;
   // Initialize the data object
+  
   delete userData.confirmPassword;
   const data = userData;
   if (name) data.name = name;

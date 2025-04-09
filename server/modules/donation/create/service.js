@@ -117,6 +117,10 @@ async function createDonation(data) {
     if (progress.totalAmount + amount > progress.requiredAmount) {
       throw new Error("Donation exceeds required amount for this opportunity.");
     }
+    // check if active
+    if (!donationData.donationOpportunity.status === "ACTIVE") {
+      throw new Error("Donation opportunity is not active.");
+    }
 
     // Calculate new progress percentage (capped at 100%)
     const newProgress = Math.min(
@@ -140,6 +144,7 @@ async function createDonation(data) {
         lastDonation: new Date(),
         donationCount: { increment: 1 },
         endAt: newProgress === 100 ? new Date() : null, // Mark as completed if 100%
+        status : newProgress === 100 ? "COMPLETED" : "ACTIVE",
       },
     });
 

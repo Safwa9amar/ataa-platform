@@ -3,16 +3,26 @@ import API_ENDPOINTS from "@/config/apiEndPoints";
 import { getDonationOpportunityById } from "@/services/donationOpportunityService";
 import { Spinner } from "@material-tailwind/react";
 import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function DonationOpportunity({ id }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   useEffect(() => {
     let fetchData = async () => {
-      let res = await getDonationOpportunityById(id);
-      setData(res);
+      let data = await getDonationOpportunityById(id);
+      setData(data);
+      router.replace(
+        pathname +
+          "?" +
+          searchParams +
+          "&remainingAmount=" +
+          (data.progress.requiredAmount - data.progress.totalAmount)
+      );
     };
     fetchData().finally(() => {
       setLoading(false);

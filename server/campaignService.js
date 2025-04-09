@@ -68,6 +68,12 @@ const getCampaignById = async (id) => {
         appointments: {
           orderBy: { createdAt: "desc" },
         },
+        _count: {
+          select: {
+            visits: true,
+            donations: true,
+          },
+        },
       },
 
       // You can attach the visit count to the campaign result

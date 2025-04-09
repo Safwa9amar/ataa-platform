@@ -9,6 +9,12 @@ import { useSearchParams } from "next/navigation";
 
 const linkData = [
   {
+    name: "create",
+    href: "/dashboards/charity/create-donation-oppertunity/create?status=create",
+    label: "إنشاء فرصة",
+    Icon: PlusCircleIcon,
+  },
+  {
     name: "active",
     href: "/dashboards/charity/create-donation-oppertunity?status=active",
     label: "البرامج النشطة",
@@ -27,10 +33,10 @@ const linkData = [
     Icon: XCircleIcon,
   },
   {
-    name: "create",
-    href: "/dashboards/charity/create-donation-oppertunity/create?status=create",
-    label: "إنشاء فرصة",
-    Icon: PlusCircleIcon,
+    name: "completed",
+    href: "/dashboards/charity/create-donation-oppertunity?status=completed",
+    label: "البرامج المكتملة",
+    Icon: CheckCircleIcon,
   },
 ];
 

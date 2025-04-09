@@ -82,6 +82,7 @@ const getPreviousDonorsCount = async (month, year, userID) => {
 
 // 5️⃣ حساب عدد المتبرعين العائدين خلال الشهر
 const getReturningDonorsCount = async (month, year, userID) => {
+  
   // Get donors this month for user's opportunities
   const donorsThisMonth = await prisma.donation.findMany({
     where: {
@@ -102,12 +103,13 @@ const getReturningDonorsCount = async (month, year, userID) => {
   const donorIds = donorsThisMonth.map((donor) => donor.userId);
 
   // Check if these donors had any previous donations to user's opportunities
+  // TODO : this is a very expensive query, we need to optimize it later
   const returningDonors = await prisma.donation.groupBy({
     by: ["userId"],
     where: {
       userId: { in: donorIds },
       createdAt: {
-        lt: new Date(year, month - 1, 1),
+        lt: new Date(year, month , 1),
       },
       donationOpportunity: {
         user: {

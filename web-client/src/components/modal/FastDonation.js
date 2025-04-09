@@ -200,7 +200,7 @@ const FastDonationModal = ({ isScrolled, isHomePage }) => {
         <DialogBody
           divider
           dir="rtl"
-          className="flex flex-col items-center gap-8 overflow-y-auto h-[600px]"
+          className="flex flex-col items-center gap-8 overflow-y-auto h-[500px]"
         >
           {validationError && (
             <Typography

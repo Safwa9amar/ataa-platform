@@ -174,7 +174,14 @@ const DonateNow = () => {
       });
       return;
     }
-
+    const remainingAmount =  searchParams.get("remainingAmount");
+    if(state.activeAmount > remainingAmount) {
+      toast.error("الرجاء ادخال مبلغ اقل من المتبقي", {
+        position: "bottom-left",
+        toastId: 6,
+      });
+      return;
+    }
     try {
       setLoading(true);
 
@@ -305,7 +312,7 @@ const DonateNow = () => {
                   value={state.silderValue}
                   onChange={handleSliderChange}
                   min={1}
-                  max={365}
+                  max={100}
                   step={1}
                   className="text-teal-500"
                   thumbClassName="[&::-webkit-slider-thumb]:bg-teal-600"

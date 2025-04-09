@@ -1,55 +1,62 @@
 "use client";
-import React from "react";
+
+import React, { useEffect, useState } from "react";
 import DonationHomeCard from "../DonationHomeCard";
 import API_ENDPOINTS from "@/config/apiEndPoints";
-import "react-multi-carousel/lib/styles.css";
 import { useCredentials } from "@/context/CredentialsContext";
+import "react-multi-carousel/lib/styles.css";
 
 export default function HomeTabs() {
-  const [data, setData] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
+  const [opportunities, setOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useCredentials();
 
-  const getData = async () => {
+  const fetchOpportunities = async () => {
     try {
-      let response = await fetch(
+      const response = await fetch(
         `${API_ENDPOINTS.DONATION_OPERTUNITIES.GET_FOR_HOME}?role=${user?.role}`
       );
-      const data = await response.json();
-      setData(data);
+      const result = await response.json();
+      setOpportunities(result);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching donation opportunities:", error);
     } finally {
       setLoading(false);
     }
   };
-  React.useEffect(() => {
-    getData();
+
+  useEffect(() => {
+    fetchOpportunities();
   }, []);
-  if (loading && data.length === 0) {
+
+  if (loading && opportunities.length === 0) {
     return (
-      <div className="h-20 w-full bg-gray-300 text-center animate-pulse"></div>
+      <div className="h-20 w-full bg-gray-300 text-center animate-pulse rounded-md" />
     );
   }
-  return data.length === 0 ? (
-    <div className="text-center my-10">لا توجد فرص حديثة</div>
-  ) : (
+
+  if (!loading && opportunities.length === 0) {
+    return <div className="text-center my-10 text-gray-600">لا توجد فرص حديثة</div>;
+  }
+
+  return (
     <div
       dir="rtl"
-      className="w-[90%]  grid place-items-center md:grid-cols-4  gap-4"
+      className="w-[90%] grid place-items-center md:grid-cols-4 gap-4"
     >
-      {data?.map((d, index) => (
+      {opportunities.map((opportunity, index) => (
         <DonationHomeCard
-          key={index}
-          id={d.id}
-          badgeColor={d.field.color}
-          badgeTitle={d.category.ar_title}
-          category={d.category}
-          image={
-            process.env.NEXT_PUBLIC_API_UPLOADS_URL + "/" + d.images[0].filename
+          key={opportunity.id ?? index}
+          id={opportunity.id}
+          badgeColor={opportunity?.field?.color}
+          badgeTitle={opportunity?.category?.ar_title}
+          category={opportunity.category}
+          image={`${process.env.NEXT_PUBLIC_API_UPLOADS_URL}/${opportunity?.images?.[0]?.filename}`}
+          title={opportunity.title}
+          remainingAmount={
+            opportunity?.progress?.requiredAmount -
+            opportunity?.progress?.totalAmount
           }
-          title={d.title}
-          remainingAmount={d.progress?.requiredAmount - d.progress?.totalAmount}
         />
       ))}
     </div>

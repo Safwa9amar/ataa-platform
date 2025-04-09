@@ -47,7 +47,7 @@ const DonorKpiCards = () => {
       />
       <FinancialKpiCard
         loading={loading}
-        title="معدل الاحتفاظ بالمتبرعيم"
+        title="معدل الاحتفاظ بالمتبرعين"
         value={kpiData?.retentionRate}
         description="إجمالي عدد المتبرعين الذين قاموا بتكرار التبرع خلال الفترة المحددة."
         color="text-purple-600"
