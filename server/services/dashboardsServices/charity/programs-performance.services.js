@@ -242,7 +242,6 @@ const getMonthlyProgramPerformance = async (
   year = new Date().getFullYear(),
   month = new Date().getMonth() + 1
 ) => {
-  // Fetch single program by ID and user ID
   const program = await prisma.donationOpportunity.findFirst({
     where: {
       id: programId,
@@ -263,7 +262,7 @@ const getMonthlyProgramPerformance = async (
         select: {
           amount: true,
           createdAt: true,
-          userId: true, // Added to track unique donors
+          userId: true,
         },
       },
     },
@@ -271,7 +270,6 @@ const getMonthlyProgramPerformance = async (
 
   if (!program) return null;
 
-  // Filter donations for the specified month and year
   const filteredDonations = program.donations.filter((donation) => {
     const donationDate = new Date(donation.createdAt);
     return (
@@ -280,71 +278,68 @@ const getMonthlyProgramPerformance = async (
     );
   });
 
-  // Initialize daily data structure
-  const daysInMonth = new Date(year, month, 0).getDate(); // Get number of days in the month
+  const daysInMonth = new Date(year, month, 0).getDate();
   const dailyData = Array.from({ length: daysInMonth }, (_, i) => ({
     day: i + 1,
     beneficiaries: 0,
     donations: 0,
   }));
 
-  // Track unique donors and their first donation day
   const uniqueDonors = new Set();
   const donorFirstDonationDay = new Map();
 
-  // Calculate beneficiaries and donations per day
   filteredDonations.forEach((donation) => {
     const date = new Date(donation.createdAt);
-    const dayIndex = date.getDate() - 1; // Convert day to zero-based index
+    const dayIndex = date.getDate() - 1;
     const rate = donation.amount / program.progress.requiredAmount;
     const beneficiaries = Math.ceil(rate * program.numOfBeneficiaries);
 
     dailyData[dayIndex].beneficiaries += beneficiaries;
     dailyData[dayIndex].donations += donation.amount;
 
-    // Track unique donors and their first donation day
     if (!uniqueDonors.has(donation.userId)) {
       uniqueDonors.add(donation.userId);
       donorFirstDonationDay.set(donation.userId, dayIndex);
     }
   });
 
-  // Calculate متوسط حجم التبرع لكل برنامج (average donation amount per program)
   const totalDonations = filteredDonations.reduce(
     (sum, donation) => sum + donation.amount,
     0
   );
+
   const averageDonationAmount = calculateAverageDonationSize(
     totalDonations,
     filteredDonations.length
   );
 
-  // Calculate معدل نمو المتبرعين لكل برنامج (donor growth rate per program)
-  const totalDonors = uniqueDonors.size;
-  const newDonorsByDay = Array(daysInMonth).fill(0); // Initialize array for new donors per day
-
+  const newDonorsByDay = Array(daysInMonth).fill(0);
   donorFirstDonationDay.forEach((dayIndex) => {
     newDonorsByDay[dayIndex]++;
   });
+  console.log(newDonorsByDay);
+
+  let cumulativeDonors = 0;
 
   const donorGrowthRateByDay = newDonorsByDay.map((newDonors, dayIndex) => {
-    const cumulativeDonors = newDonorsByDay
-      .slice(0, dayIndex + 1)
-      .reduce((sum, count) => sum + count, 0);
+    const previousCumulative = cumulativeDonors;
+    cumulativeDonors += newDonors;
+
     return {
       day: dayIndex + 1,
-      growthRate: growthRate(cumulativeDonors, newDonors),
+      growthRate: growthRate(previousCumulative, cumulativeDonors),
     };
   });
 
   return {
     program: program.title,
-    dailyData, // البيانات اليومية
-    averageDonationAmount, // متوسط حجم التبرع لكل برنامج
-    donorGrowthRateByDay, // معدل نمو المتبرعين لكل يوم
-    totalDonations, // إجمالي التبرعات
+    dailyData,
+    averageDonationAmount,
+    donorGrowthRateByDay,
+    totalDonations,
   };
 };
+
 const getAverageDonationForAllPrograms = async (userID) => {
   try {
     const result = await prisma.donation.aggregate({

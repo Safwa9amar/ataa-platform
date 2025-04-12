@@ -74,33 +74,23 @@ async function getDonorGrowthOverTime(userID, filters) {
   let {
     intervalType = "days",
     startDate,
-    endDate,
+    endDate = new Date(),
     selectedMonths = [],
   } = filters;
-  // Validate interval type
+
   const validIntervals = ["days", "months"];
   if (!validIntervals.includes(intervalType.toLowerCase())) {
     throw new Error('Invalid interval type. Use "days" or "months"');
   }
 
-  // Arabic month names configuration
   const arabicMonths = [
-    "يناير",
-    "فبراير",
-    "مارس",
-    "أبريل",
-    "مايو",
-    "يونيو",
-    "يوليو",
-    "أغسطس",
-    "سبتمبر",
-    "أكتوبر",
-    "نوفمبر",
-    "ديسمبر",
+    "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+    "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
   ];
+
   const { startDate: normalizedStartDate, endDate: normalizedEndDate } =
     normalizeDateRange(startDate, endDate);
-  // 1. Get donations with date filtering
+
   const donations = await prisma.donation.findMany({
     where: {
       donationOpportunity: { user: { id: userID } },
@@ -113,22 +103,23 @@ async function getDonorGrowthOverTime(userID, filters) {
     orderBy: { createdAt: "asc" },
   });
 
-  if (donations.length === 0) return [];
+  const actualStart = startDate
+    ? new Date(startDate)
+    : donations[0]
+    ? new Date(donations[0].createdAt)
+    : new Date();
 
-  // 2. Determine date range boundaries
-  const dateRange = {
-    start: startDate ? new Date(startDate) : new Date(donations[0].createdAt),
-    end: endDate
-      ? new Date(endDate)
-      : new Date(donations[donations.length - 1].createdAt),
-  };
+  const actualEnd = endDate
+    ? new Date(endDate)
+    : donations[donations.length - 1]
+    ? new Date(donations[donations.length - 1].createdAt)
+    : new Date();
 
-  // 3. Generate time intervals based on selected type
   const intervals = [];
-  const currentDate = new Date(dateRange.start);
-  currentDate.setHours(0, 0, 0, 0); // Normalize time
+  const currentDate = new Date(actualStart);
+  currentDate.setHours(0, 0, 0, 0);
 
-  while (currentDate <= dateRange.end) {
+  while (currentDate <= actualEnd) {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const day = currentDate.getDate();
@@ -155,14 +146,13 @@ async function getDonorGrowthOverTime(userID, filters) {
     }
   }
 
-  // 4. Aggregate donations into intervals
+  // 🔁 Group donations by interval
   const intervalMap = new Map(
     intervals.map((i) => [
       i.key,
       {
         ...i,
         donors: new Set(),
-        count: 0,
       },
     ])
   );
@@ -179,26 +169,51 @@ async function getDonorGrowthOverTime(userID, filters) {
     }
   });
 
-  // 5. Process cumulative growth with proper axis labels
+  // ✅ Start from zero
   let cumulativeDonors = 0;
-  let previousDonors = 0;
-  const results = intervals.map((interval) => {
+  let previousCumulative = 0;
+
+  const results = [];
+
+  intervals.forEach((interval, index) => {
     const data = intervalMap.get(interval.key);
     const newDonors = data ? data.donors.size : 0;
+
+    if (index === 0) {
+      // First point: zero donors
+      results.push({
+        donors: 0,
+        newDonors: 0,
+        isoDate: interval.isoDate,
+        timestamp: interval.date.getTime(),
+        growthRate: 0,
+        ...(intervalType === "months"
+          ? {
+              label: interval.label,
+              granularity: "month",
+              month: arabicMonths[interval.date.getMonth()],
+              year: interval.date.getFullYear(),
+            }
+          : {
+              label: interval.label,
+              granularity: "day",
+              day: interval.date.getDate(),
+              fullDate: interval.date.toLocaleDateString("ar-EG"),
+            }),
+      });
+    }
+
+    // From second interval onward
     cumulativeDonors += newDonors;
+    const growth = growthRate(previousCumulative, cumulativeDonors);
+    previousCumulative = cumulativeDonors;
 
-    // Calculate growth rate
-    const growth = growthRate(previousDonors, cumulativeDonors);
-    previousDonors = cumulativeDonors;
-
-    return {
-      // Common fields for all intervals
+    results.push({
       donors: cumulativeDonors,
+      newDonors,
       isoDate: interval.isoDate,
       timestamp: interval.date.getTime(),
-      growthRate: growth, // Add growth rate to the result
-
-      // Type-specific labels
+      growthRate: growth,
       ...(intervalType === "months"
         ? {
             label: interval.label,
@@ -212,14 +227,15 @@ async function getDonorGrowthOverTime(userID, filters) {
             day: interval.date.getDate(),
             fullDate: interval.date.toLocaleDateString("ar-EG"),
           }),
-    };
+    });
   });
 
-  // 6. Apply month filtering if specified
   return intervalType === "months" && selectedMonths.length > 0
     ? results.filter((r) => selectedMonths.includes(r.month))
     : results;
 }
+
+
 
 // **📊 تحسين تجربة المستخدم عبر التصفية والفرز**
 async function getProgramsEngagementComparison(userID, filters = {}) {

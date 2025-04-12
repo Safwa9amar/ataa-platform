@@ -69,6 +69,7 @@ const FinancialDashboard = () => {
                 value={`${kpiData?.grossProfitMargin}%`}
                 description="النسبة المئوية للإيرادات المتبقية بعد خصم تكاليف البرامج"
                 color="text-green-600"
+                currency=""
               />
               <FinancialKpiCard
                 loading={loading}
@@ -76,6 +77,7 @@ const FinancialDashboard = () => {
                 value={`${kpiData?.donationExpenseRatio}%`}
                 description="النسبة بين إجمالي التبرعات والنفقات التشغيلية"
                 color="text-purple-600"
+                currency=""
               />
               <FinancialKpiCard
                 loading={loading}

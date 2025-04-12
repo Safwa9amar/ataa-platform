@@ -45,7 +45,7 @@ export default function DonorGrowthOverTime() {
   // ✅ إعداد الفلاتر الافتراضية
   const [filters, setFilters] = useState({
     startDate: "",
-    endDate: "",
+    endDate: new Date().toISOString().split("T")[0],
   });
 
   const [state, setState] = useState({

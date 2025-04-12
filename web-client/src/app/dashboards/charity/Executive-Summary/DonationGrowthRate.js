@@ -178,13 +178,14 @@ export default function DonationGrowthRate() {
           </IconButton>
 
           {/* زر تخصيص الفلاتر */}
-          <IconButton variant="gradient" onClick={fireSwal}>
+          {/* <IconButton variant="gradient" onClick={fireSwal}>
             <MdCalendarMonth className="w-5 h-5" />
-          </IconButton>
+          </IconButton> */}
         </ButtonGroup>
       }
+      // بناءً على الأشهر أو الأيام المحددة
       title="معدل نمو التبرعات"
-      description="يعرض هذا المخطط معدل نمو التبرعات بناءً على الأشهر أو الأيام المحددة."
+      description="يعرض هذا المخطط معدل نمو التبرعات ."
       loading={state.loading}
     >
       {state.error ? (
@@ -207,7 +208,7 @@ export default function DonationGrowthRate() {
               tickFormatter={(value) => `${value}%`}
             />
             <Tooltip
-              formatter={(value) => `${value.toFixed(2)}%`}
+              formatter={(value) => `${value}%`}
               contentStyle={{
                 textAlign: "right",
                 backgroundColor: "#ffffff",

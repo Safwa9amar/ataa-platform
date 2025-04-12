@@ -7,7 +7,6 @@
 function engagementRate(uniqueDonors, totalDonations) {
   return uniqueDonors > 0 ? (totalDonations / uniqueDonors) * 100 : 0;
 }
-
 /**
  * حساب معدل النمو (Growth Rate)
  * @param {number} previousDonors - عدد المتبرعين في الفترة السابقة
@@ -15,10 +14,23 @@ function engagementRate(uniqueDonors, totalDonations) {
  * @returns {number} معدل النمو كنسبة مئوية
  */
 function growthRate(previousDonors, newDonors) {
-  return previousDonors > 0
-    ? ((newDonors - previousDonors) / previousDonors) * 100
-    : 0;
+  // إذا لم يكن هناك تبرعات سابقة، سيكون النمو 0%
+  if (previousDonors === 0 && newDonors === 0) {
+    return 0;
+  }
+
+  // إذا كانت فترة المتبرعين السابقة هي 0 وكان هناك تبرع جديد، يتم اعتبار النمو 100%
+  if (previousDonors === 0 && newDonors > 0) {
+    return 100;
+  }
+
+  // إذا كانت القيمة السابقة أكبر من 0، نحسب معدل النمو
+  const growth = ((newDonors - previousDonors) / previousDonors) * 100;
+
+  // نحدد الحد الأعلى والأدنى
+  return Math.max(-100, Math.min(100, growth)).toFixed(2);
 }
+
 
 /**
  * حساب معدل تحديث المحتوى (Update Frequency)
@@ -91,18 +103,31 @@ function programCompletionRate(completedPrograms, totalPrograms) {
 function totalDonations(donations) {
   return donations.reduce((sum, donation) => sum + donation, 0);
 }
-
 /**
- * حساب معدل نمو التبرعات (Donation Growth Rate)
- * @param {number} previousDonations - إجمالي التبرعات في الفترة السابقة
- * @param {number} currentDonations - إجمالي التبرعات في الفترة الحالية
- * @returns {number} معدل نمو التبرعات كنسبة مئوية
+ * 📈 حساب معدل نمو التبرعات (Donation Growth Rate)
+ *
+ * يحسب معدل النمو بين فترتين كنسبة مئوية، ويحد النتيجة بين -100% و +100%.
+ *
+ * @param {number} previous - إجمالي التبرعات في الفترة السابقة
+ * @param {number} current - إجمالي التبرعات في الفترة الحالية
+ * @param {number} [precision=2] - عدد الأرقام بعد الفاصلة العشرية
+ * @returns {number} معدل النمو بالنسبة المئوية
  */
-function donationGrowthRate(previousDonations, currentDonations) {
-  return previousDonations > 0
-    ? ((currentDonations - previousDonations) / previousDonations) * 100
-    : 0;
+function donationGrowthRate(previous, current, precision = 2) {
+  if (typeof previous !== "number" || typeof current !== "number") return 0;
+
+  // لا يمكن حساب معدل النمو إن لم توجد بيانات سابقة
+  if (previous <= 0) return 0;
+
+  const growth = ((current - previous) / previous) * 100;
+
+  // تحديد الحد الأدنى والأقصى للقيمة
+  const clampedGrowth = Math.max(-100, Math.min(100, growth));
+
+  // تقريب النتيجة
+  return parseFloat(clampedGrowth.toFixed(precision));
 }
+
 
 /**
  * حساب صافي الدخل (Net Income)
@@ -233,25 +258,21 @@ function calculateDonationsPerProgramRatio(
   return donationsPerProgramRatio;
 }
 /**
- * Calculate the Average Donation Size (متوسط حجم التبرع).
- * The formula used is:
- * متوسط حجم التبرع = إجمالي التبرعات / عدد التبرعات
+ * Calculates the average donation size (متوسط حجم التبرع).
+ * Formula:
+ *   متوسط التبرع = إجمالي التبرعات / عدد التبرعات
  *
- * @param {number} totalDonations - The total donations (إجمالي التبرعات).
- * @param {number} totalDonationsCount - The total number of donations (عدد التبرعات).
- * @returns {number|string} - The Average Donation Size, or an error message if total donations count is 0.
+ * @param {number} totalAmount - إجمالي مبلغ التبرعات.
+ * @param {number} donationCount - عدد عمليات التبرع.
+ * @returns {number} متوسط قيمة التبرع (بدقة منزلتين عشريتين)، أو 0 إذا لم تكن هناك تبرعات.
  */
-function calculateAverageDonationSize(totalDonations, totalDonationsCount) {
-  // Check if total donations count is zero to avoid division by zero error
-  if (totalDonationsCount === 0) {
+function calculateAverageDonationSize(totalAmount, donationCount) {
+  if (!donationCount || donationCount <= 0) {
     return 0;
   }
 
-  // Calculate the average donation size
-  const averageDonationSize = totalDonations / totalDonationsCount;
-
-  // Return the result
-  return averageDonationSize;
+  const average = totalAmount / donationCount;
+  return parseFloat(average.toFixed(2)); // دقة منزلتين عشريتين
 }
 
 /**

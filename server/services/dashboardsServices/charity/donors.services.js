@@ -3,6 +3,7 @@ const {
   calculateAverageDonationSize,
   calculateDonorGrowthRate,
   calculateDonationPercentageByAgeGroup,
+  growthRate,
 } = require("../../../utils/metrics");
 const prisma = new PrismaClient();
 
@@ -336,8 +337,7 @@ const getNewVsReturningDonors = async (
   return Object.values(donorsComparisonData);
 };
 
-const getDonorGrowthRate = async (userID, startDate, endDate, viewType) => {
-  // 🟢 التأكد من صحة التواريخ
+const getDonorGrowthRate = async (userID, startDate, endDate, viewType = "monthly") => {
   const start = new Date(startDate);
   const end = new Date(endDate);
 
@@ -345,80 +345,75 @@ const getDonorGrowthRate = async (userID, startDate, endDate, viewType) => {
     throw new Error("تاريخ البداية يجب أن يكون قبل تاريخ النهاية");
   }
 
-  // 🟢 حساب عدد المتبرعين في بداية الفترة
+  // 🔹 عدد المتبرعين قبل الفترة المحددة
   const initialDonorsCount = await prisma.donation.count({
     where: {
       donationOpportunity: { createdByuserId: userID },
-      createdAt: { lte: start }, // قبل أو يساوي تاريخ البداية
+      createdAt: { lt: start }, // فقط ما قبل الفترة
     },
   });
 
-  // 🟢 جلب جميع التبرعات خلال الفترة المحددة
-  const finalDonors = await prisma.donation.findMany({
+  // 🔹 جلب التبرعات خلال الفترة
+  const donations = await prisma.donation.findMany({
     where: {
       donationOpportunity: { createdByuserId: userID },
-      createdAt: { gte: start, lte: end }, // خلال الفترة المحددة
+      createdAt: { gte: start, lte: end },
     },
     select: { createdAt: true },
   });
 
-  // 🟢 تجهيز البيانات حسب نوع العرض (شهري أو يومي)
-  let donorGrowthData = {};
+  // 🔹 توزيع التبرعات حسب الفترة (شهرية أو يومية)
+  const donorCountsByPeriod = {};
 
-  finalDonors.forEach((donor) => {
-    const date = new Date(donor.createdAt);
-    const periodKey =
+  for (const { createdAt } of donations) {
+    const date = new Date(createdAt);
+    const key =
       viewType === "monthly"
-        ? `${date.getFullYear()}-${(date.getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}` // YYYY-MM
-        : `${date.getFullYear()}-${(date.getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`; // YYYY-MM-DD
+        ? `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}`
+        : date.toISOString().slice(0, 10); // YYYY-MM-DD
 
-    donorGrowthData[periodKey] = (donorGrowthData[periodKey] || 0) + 1;
-  });
+    donorCountsByPeriod[key] = (donorCountsByPeriod[key] || 0) + 1;
+  }
 
-  // 🟢 التأكد من تضمين جميع الأشهر أو الأيام بين `startDate` و `endDate`
-  let currentDate = new Date(start);
+  // 🔹 التأكد من تغطية كامل الفترة
+  const currentDate = new Date(start);
   while (currentDate <= end) {
-    const periodKey =
+    const key =
       viewType === "monthly"
-        ? `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}`
-        : `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}-${currentDate
-            .getDate()
-            .toString()
-            .padStart(2, "0")}`;
+        ? `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, "0")}`
+        : currentDate.toISOString().slice(0, 10);
 
-    if (!donorGrowthData[periodKey]) {
-      donorGrowthData[periodKey] = 0;
+    if (!donorCountsByPeriod[key]) {
+      donorCountsByPeriod[key] = 0;
     }
 
-    // تحديث التاريخ إلى اليوم أو الشهر التالي
-    currentDate.setDate(viewType === "monthly" ? 1 : currentDate.getDate() + 1);
+    // الانتقال إلى الشهر أو اليوم التالي
     if (viewType === "monthly") {
       currentDate.setMonth(currentDate.getMonth() + 1);
+      currentDate.setDate(1);
+    } else {
+      currentDate.setDate(currentDate.getDate() + 1);
     }
   }
 
-  // 🟢 حساب معدل نمو المتبرعين لكل فترة
-  const sortedPeriods = Object.keys(donorGrowthData).sort();
+  // 🔹 ترتيب الفترات زمنياً
+  const sortedPeriods = Object.keys(donorCountsByPeriod).sort();
+
+  // 🔹 حساب معدل النمو لكل فترة
   let previousDonors = initialDonorsCount;
+  const result = sortedPeriods.map((period) => {
+    const added = donorCountsByPeriod[period];
+    const currentDonors = previousDonors + added;
 
-  const growthRates = sortedPeriods.map((period) => {
-    const currentDonors = previousDonors + donorGrowthData[period];
-    const growthRate = calculateDonorGrowthRate(currentDonors, previousDonors);
-    previousDonors = currentDonors; // تحديث العدد للحساب التالي
-
-    return { period, growthRate };
+    return {
+      period,
+      growthRate: growthRate(previousDonors, currentDonors), // تقريبه إلى رقم عشري من رقمين
+    };
   });
 
-  return growthRates;
+  return result;
 };
+
 
 async function getDonationMetrics(
   userID,

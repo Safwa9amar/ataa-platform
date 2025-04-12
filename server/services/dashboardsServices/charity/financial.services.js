@@ -5,6 +5,7 @@ const {
   calculateGrossProfitMargin,
   calculateDonationToExpenseRatio,
   calculateRevenueGrowthRate,
+  growthRate,
 } = require("../../../utils/metrics");
 const prisma = new PrismaClient();
 const getKpiData = async (userID) => {
@@ -56,6 +57,8 @@ const getKpiData = async (userID) => {
     const totalLiabilities = totalExpenses + totalInvoices;
     const netIncomeValue = netIncome(totalRevenue, totalLiabilities);
 
+    console.log(totalDonations, totalLiabilities);
+
     // 🟢 حساب مؤشرات الأداء الرئيسية (KPIs)
     return {
       netIncome: netIncomeValue.toFixed(2),
@@ -75,94 +78,93 @@ const getKpiData = async (userID) => {
     throw new Error("فشل في استرجاع بيانات KPI");
   }
 };
-
-const getMonthlyRevenueGrowth = async (
-  userId,
-  year = new Date().getFullYear()
-) => {
+/**
+ * 🔢 حساب نمو الإيرادات الشهرية (يشمل التبرعات + الإيرادات الأخرى)
+ * @param {string} userId - معرف المستخدم
+ * @param {number} [year] - السنة المطلوبة (افتراضي: السنة الحالية)
+ * @returns {Promise<Array<{month: string, revenue: number, growthRate: number}>>}
+ */
+const getMonthlyRevenueGrowth = async (userId, year = new Date().getFullYear()) => {
   try {
+    // 1️⃣ الحصول على المؤسسة الخيرية الخاصة بالمستخدم
     const charity = await prisma.charity.findFirst({
-      where: {
-        User: {
-          id: userId,
-        },
-      },
-      select: { id: true, User: true },
+      where: { User: { id: userId } },
+      select: { id: true },
     });
-    // Fetch total revenue per month
-    const revenues = await prisma.income.groupBy({
+
+    if (!charity) throw new Error("المؤسسة الخيرية غير موجودة.");
+
+    // 2️⃣ تحديد الفترة الزمنية (سنة كاملة)
+    const startOfYear = new Date(`${year}-01-01`);
+    const endOfYear = new Date(`${year}-12-31`);
+
+    // 3️⃣ جلب الإيرادات الشهرية
+    const incomes = await prisma.income.groupBy({
       by: ["receiptDate"],
       _sum: { amount: true },
       where: {
         charityId: charity.id,
         receiptDate: {
-          gte: new Date(`${year}-01-01`),
-          lte: new Date(`${year}-12-31`),
+          gte: startOfYear,
+          lte: endOfYear,
         },
       },
     });
-    let donations = await prisma.donation.groupBy({
+
+    // 4️⃣ جلب التبرعات الشهرية
+    const donations = await prisma.donation.groupBy({
       by: ["createdAt"],
       _sum: { amount: true },
       where: {
-        donationOpportunity: {
-          createdByuserId: userId,
-        },
+        donationOpportunity: { createdByuserId: userId },
         createdAt: {
-          gte: new Date(`${year}-01-01`),
-          lte: new Date(`${year}-12-31`),
+          gte: startOfYear,
+          lte: endOfYear,
         },
       },
     });
 
-    donations.forEach((d) => {
-      revenues.push({
-        _sum: { amount: d._sum.amount },
-        receiptDate: d.createdAt,
-      });
-    });
+    // 5️⃣ دمج التبرعات مع الإيرادات في مصفوفة موحدة
+    const allRevenues = [...incomes.map(i => ({
+      date: i.receiptDate,
+      amount: i._sum.amount || 0,
+    })), ...donations.map(d => ({
+      date: d.createdAt,
+      amount: d._sum.amount || 0,
+    }))];
 
-    // Initialize 12 months data with default values
+    // 6️⃣ أسماء الأشهر بالعربية
     const months = [
-      "يناير",
-      "فبراير",
-      "مارس",
-      "أبريل",
-      "مايو",
-      "يونيو",
-      "يوليو",
-      "أغسطس",
-      "سبتمبر",
-      "أكتوبر",
-      "نوفمبر",
-      "ديسمبر",
+      "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+      "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
     ];
 
-    let result = Array.from({ length: 12 }, (_, i) => ({
+    // 7️⃣ تهيئة مصفوفة النتائج بـ 12 شهرًا
+    const result = Array.from({ length: 12 }, (_, i) => ({
       month: months[i],
       revenue: 0,
       growthRate: 0,
     }));
 
-    // Populate the revenue data
-    revenues.forEach(({ _sum, receiptDate }) => {
-      const monthIndex = new Date(receiptDate).getMonth();
-      result[monthIndex].revenue += _sum.amount || 0;
+    // 8️⃣ توزيع الإيرادات والتبرعات حسب الشهر
+    allRevenues.forEach(({ date, amount }) => {
+      const monthIndex = new Date(date).getMonth();
+      result[monthIndex].revenue += amount;
     });
-    // Calculate growth rate for each month
+
+    // 9️⃣ حساب معدل النمو الشهري
     for (let i = 1; i < result.length; i++) {
-      const prevRevenue = result[i - 1].revenue;
-      const currentRevenue = result[i].revenue;
-      result[i].growthRate =
-        prevRevenue > 0
-          ? calculateRevenueGrowthRate(currentRevenue, prevRevenue)
-          : 0;
+      const prev = result[i - 1].revenue;
+      const curr = result[i].revenue;
+
+      // معدل النمو = ((الحالي - السابق) ÷ السابق) × 100
+      result[i].growthRate = growthRate(prev, curr);  
     }
 
     return result;
   } catch (error) {
-    console.error("Error fetching monthly revenue growth:", error);
-    throw new Error("Failed to retrieve monthly revenue growth data");
+    console.error("❌ خطأ أثناء جلب نمو الإيرادات الشهرية:", error);
+    throw new Error("فشل في تحميل بيانات نمو الإيرادات");
   }
 };
 

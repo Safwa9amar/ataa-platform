@@ -109,15 +109,15 @@ const getSuccessfullyCompletedPrograms = async (userID) => {
   ];
 };
 
-
 const getDonationGrowthRate = async (
   userID,
   year = new Date().getFullYear(),
   viewType = "monthly",
-  selectedMonths = [new Date().getMonth() + 1] // الأشهر المختارة
+  selectedMonths = [new Date().getMonth() + 1]
 ) => {
-  // 🟢 تجهيز جميع الفترات المبدئية بالقيم الافتراضية (0)
-  let donationData = {};
+  if (!userID) throw new Error("userID is required");
+
+  const donationData = {};
 
   if (viewType === "monthly") {
     for (let month = 1; month <= 12; month++) {
@@ -129,7 +129,7 @@ const getDonationGrowthRate = async (
       }
     }
   } else {
-    const selectedMonth = selectedMonths[0]; // يجب أن يكون شهر واحد فقط في العرض اليومي
+    const selectedMonth = selectedMonths[0];
     const daysInMonth = new Date(year, selectedMonth, 0).getDate();
 
     for (let day = 1; day <= daysInMonth; day++) {
@@ -140,13 +140,12 @@ const getDonationGrowthRate = async (
     }
   }
 
-  // 🟢 جلب بيانات التبرعات من قاعدة البيانات
   const donations = await prisma.donation.findMany({
     where: {
       donationOpportunity: { createdByuserId: userID },
       createdAt: {
-        gte: new Date(`${year}-01-01`),
-        lte: new Date(`${year}-12-31`),
+        gte: new Date(`${year}-01-01T00:00:00Z`),
+        lte: new Date(`${year}-12-31T23:59:59Z`),
       },
     },
     select: {
@@ -156,36 +155,37 @@ const getDonationGrowthRate = async (
     orderBy: { createdAt: "asc" },
   });
 
-  // 🟢 تعبئة البيانات الفعلية في الكائن donationData
-  donations.forEach((donation) => {
-    const date = new Date(donation.createdAt);
-    const month = date.getMonth() + 1; // الأشهر تبدأ من 1-12
+  donations.forEach(({ amount, createdAt }) => {
+    const date = new Date(createdAt);
+    const month = date.getMonth() + 1;
     const day = date.getDate();
-    const periodKey =
+    const key =
       viewType === "monthly" ? `${year}-${month}` : `${year}-${month}-${day}`;
 
-    if (donationData[periodKey]) {
-      donationData[periodKey].totalDonations += donation.amount || 0;
+    if (donationData[key]) {
+      donationData[key].totalDonations += amount || 0;
     }
   });
 
-  // 🟢 حساب معدل نمو التبرعات لكل فترة
-  const sortedPeriods = Object.keys(donationData);
+  const sortedPeriods = Object.keys(donationData).sort(
+    (a, b) => new Date(a) - new Date(b)
+  );
 
-  const growthRates = sortedPeriods.map((period, index) => {
-    const currentDonations = donationData[period].totalDonations;
-    const previousDonations =
+  const growthRates = sortedPeriods.map((key, index) => {
+    const current = donationData[key].totalDonations;
+    const previous =
       index > 0 ? donationData[sortedPeriods[index - 1]].totalDonations : 0;
 
     return {
-      period: donationData[period].period,
-      totalDonations: currentDonations,
-      growthRate: donationGrowthRate(previousDonations, currentDonations),
+      period: donationData[key].period,
+      totalDonations: current,
+      growthRate: donationGrowthRate(previous, current),
     };
   });
 
   return growthRates;
 };
+
 
 const getNumberOfNewDonors = async (
   userID,
