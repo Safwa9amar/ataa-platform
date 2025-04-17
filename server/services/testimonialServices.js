@@ -7,6 +7,7 @@ const getTestimonialsService = async () => {
     include: {
       user: {
         select: {
+          id: true,
           name: true,
           email: true,
           photo: true,
@@ -28,9 +29,15 @@ const getTestimonialByIdService = async (id) => {
 
 // Create a new testimonial
 const createTestimonialService = async ({ grade, comment, rating }, id) => {
+  console.log(grade, comment, rating, id);
+  
   return await prisma.testimonial.create({
     data: {
-      userId: id,
+      user: {
+        connect: {
+          id: id,
+        },
+      },
       grade,
       comment,
       rating,

@@ -8,6 +8,7 @@ import { BiBus } from "react-icons/bi";
 import { CiShare2 } from "react-icons/ci";
 import { MdShare } from "react-icons/md";
 import { useShare } from "@/context/ShareContext";
+import { useCredentials } from "@/context/CredentialsContext";
 
 const NationalBloodDonationCard = ({
   id,
@@ -20,6 +21,7 @@ const NationalBloodDonationCard = ({
   width = 300,
   customStyles = {},
 }) => {
+  const { user } = useCredentials();
   const fadeAnim = useRef(0);
   const translateYAnim = useRef(20);
   const { openShareModal } = useShare();
@@ -90,8 +92,8 @@ const NationalBloodDonationCard = ({
                   `/our-programmes/campaign/national-blood?query=${id}&title=${title}`,
                 title: title,
                 userId: user.id,
-                type: "campaign",
-                itemId: data.id,
+                type: "national-campaign",
+                itemId: id,
               })
             }
             color="indigo"

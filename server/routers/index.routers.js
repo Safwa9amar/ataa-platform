@@ -69,7 +69,7 @@ const statisticsRoutes = require("./statisticsRoutes");
 const paymentRoutes = require("./paymentRoutes");
 
 // nationalCampaignRoutes
-const nationalCampaignRoutes = require("./nationalCampaignRoutes");
+const nationalCampaignRoutes =  require("../modules/blood-agency/national-campaign/routes");
 
 // notificationRoutes
 const notificationRoutes = require("./notificationRoutes");
@@ -102,7 +102,7 @@ const invoiceRouter = require("./invoiceRouter");
 
 //expensesRouter
 const expensesRouter = require("./expensesRouter");
-
+// /nationalCampaignRoutes
 const routers = [
   fcmRouter,
   //fastDonationRouter

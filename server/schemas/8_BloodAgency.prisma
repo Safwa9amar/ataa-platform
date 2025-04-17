@@ -25,20 +25,31 @@ model BloodAgency {
 }
 
 model NationalCampaign {
-  id           String @id @default(uuid())
-  campaignName String // Full name of the blood agency
-  willayaCode  String // Willaya code
+  id             String            @id @default(uuid())
+  title          String // عنوان الحملة
+  description    String
+  overview       String            @db.Text
+  wilaya         String // الولاية
+  daira          String // الدائرة
+  commune        String // البلدية
+  start_date     DateTime // تاريخ البداية
+  end_date       DateTime // تاريخ النهاية
+  socialLinks    Json? // مصفوفة الروابط الاجتماعية
+  truckCount     Int
+  truckLocations Json // مصفوفة مواقع الشاحنات
+  status         opportunityStatus @default(PENDING)
 
-  targetUnit    Int // Target unit of blood to be collected
-  collectedUnit Int // Collected unit of blood
-  needyBlood    bloodType
-  locationLink  String // Location link of the campaign
+  donationType    String // نوع التبرع (دم كامل - بلازما...)
+  targetGroups    Json // مصفوفة فئات مستهدفة
+  mostNeededBlood bloodType? // الدم الأكثر حاجة
+  targetUnits     Int @default(0) // عدد الوحدات المستهدفة
+
+  appointments Appointments[]
+  images       Image[] // مصفوفة روابط الصور
 
   // Relations to BloodAgency
   bloodAgencyId String // Blood Agency ID
   bloodAgency   BloodAgency @relation(fields: [bloodAgencyId], references: [id])
-
-  appointments        Appointments[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

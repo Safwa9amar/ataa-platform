@@ -140,9 +140,7 @@ const getUsersCampaigns = async (
   // Calculate the offset
   const offset = (page - 1) * pageSize;
   console.log(type, status, progress, keywords);
-
   // Fetch campaigns with pagination]
-
   const searchFilter =
     keywords !== undefined && !validator.isEmpty(keywords)
       ? {
@@ -161,7 +159,6 @@ const getUsersCampaigns = async (
           ],
         }
       : undefined;
-
   const rateFilter = progress
     ? {
         rate: {
@@ -192,7 +189,6 @@ const getUsersCampaigns = async (
           in: type,
         },
         progress: rateFilter,
-
         ...searchFilter,
       },
 

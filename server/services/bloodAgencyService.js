@@ -6,7 +6,7 @@ const getTrialEndDate = require("../utils/getTrialEndDate");
  * @returns {Object} Created Blood Agency
  */
 exports.createBloodAgency = async (userId, bloodAgencyData) => {
-  let res = prisma.bloodAgency.create({
+  let res = await prisma.bloodAgency.create({
     data: {
       ...bloodAgencyData,
       address: {
@@ -27,6 +27,11 @@ exports.createBloodAgency = async (userId, bloodAgencyData) => {
       isActive: true,
       canCreateCampaign: true,
       trialEndDate: getTrialEndDate(2000),
+      bloodAgency: {
+        connect: {
+          id: res.id,
+        },
+      },
     },
   });
 

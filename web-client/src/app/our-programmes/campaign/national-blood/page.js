@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useCredentials } from "@/context/CredentialsContext";
 import { createAppointment } from "@/services/appointmentsServices";
-import { Button } from "@material-tailwind/react";
+import { Button, Typography } from "@material-tailwind/react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import validator from "validator";
@@ -106,8 +106,11 @@ const BloodDonationBooking = ({ searchParams }) => {
     } catch (err) {
       console.error(err);
       setLoading(false);
-      toast.error("حدث خطأ أثناء حجز موعدك", {
-        position: "bottom-left",
+      Swal.fire({
+        icon: "error",
+        title: "حدث خطأ أثناء حجز موعدك",
+        text: err,
+        confirmButtonText: "موافق",
       });
     }
   };

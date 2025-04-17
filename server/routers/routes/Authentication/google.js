@@ -45,7 +45,6 @@ router.all("/google", validateToken, async (req, res) => {
             email,
             name,
             phone: null,
-            role: "donor",
             isVerified: true,
             registrationStatus: "VERIFIED",
             trialEndDate: getTrialEndDate(15),

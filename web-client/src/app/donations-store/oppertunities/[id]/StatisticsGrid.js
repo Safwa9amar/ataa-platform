@@ -30,7 +30,7 @@ function StatisticsGrid({ data, lastDonation }) {
       ),
     },
     { label: "عدد عمليات التبرع", value: data?.donationCount },
-    { label: "عدد المستفيدين", value: data?.numberBeneficiaries },
+    { label: "عدد المستفيدين", value: data?.numOfBeneficiaries },
   ];
 
   // Animation Variants

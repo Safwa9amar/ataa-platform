@@ -48,10 +48,22 @@ const createAppointment = async (data, userId) => {
   const { type, campaignId } = data;
   const isCampaign = type === CAMTYPE.USERCAMPAIGN;
   const isNationalCampaign = type === CAMTYPE.NATIONALCAMPAIGN;
+  console.log(data);
 
   // تنفيذ استعلامات البحث بالتوازي لتحسين الأداء
   const [campaign, user] = await Promise.all([
-    prisma.campaign.findUniqueOrThrow({ where: { id: campaignId } }),
+    isNationalCampaign
+      ? prisma.nationalCampaign.findUniqueOrThrow({
+          where: { id: campaignId },
+          include: {
+            bloodAgency: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        })
+      : prisma.campaign.findUniqueOrThrow({ where: { id: campaignId } }),
     prisma.users.findUniqueOrThrow({ where: { id: userId } }),
   ]);
 
@@ -62,7 +74,7 @@ const createAppointment = async (data, userId) => {
       userId,
       OR: [
         { campaignId: isCampaign ? campaignId : undefined },
-        { nationalCampaignId: isNationalCampaign ? campaignId : undefined },
+        { nationalCampaignID: isNationalCampaign ? campaignId : undefined },
       ],
     },
     include: {
@@ -121,7 +133,13 @@ const createAppointment = async (data, userId) => {
       }),
       link: campaignUrl,
       body: notificationBody,
-      userId: campaign.createdByuserId,
+      user: {
+        connect: {
+          id: isNationalCampaign
+            ? campaign.bloodAgency.user.id
+            : campaign.createdByuserId,
+        },
+      },
     },
   });
 
@@ -152,7 +170,11 @@ const setAppointmentDate = async (id, data) => {
       body: `تم تحديد موعد تبرعك لحمة التبرع بالدم يوم ${dayjs(
         updatedAppointment.date
       ).format("YYYY:MMM:DD")}`,
-      userId: updatedAppointment?.userId,
+      user: {
+        connect: {
+          id: updatedAppointment?.userId,
+        },
+      },
     },
   });
 

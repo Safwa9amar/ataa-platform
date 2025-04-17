@@ -41,7 +41,7 @@ const buttonVariants = {
   visible: { opacity: 1, transition: { delay: 0.3 } },
 };
 
-export function DonationCard({ data }) {
+export function NationalBloodCard({ data }) {
   const { user } = useCredentials();
   const { toggleSaveOpportunity, isOpportunitySaved } =
     useSavedDonationOpportunities();
@@ -198,37 +198,4 @@ export function DonationCard({ data }) {
   );
 }
 
-export function DonationCardSkeleton() {
-  return (
-    <motion.div
-      className="w-full max-w-[26rem]"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <Card className="bg-mangoBlack h-full rounded-lg shadow-md" dir="rtl">
-        {/* Card Header */}
-        <CardHeader floated={false} className="relative h-52">
-          <Skeleton height={208} className="w-full h-full" />
-        </CardHeader>
-
-        {/* Card Body */}
-        <CardBody>
-          <Skeleton height={10} className="my-2" />
-          <Skeleton height={20} width="80%" className="mb-2" />
-          <Skeleton count={2} height={14} width="100%" />
-        </CardBody>
-
-        {/* Card Footer */}
-        <CardFooter className="pt-3">
-          <div className="flex flex-wrap gap-3">
-            <Skeleton height={40} width="100%" />
-            <div className="grid grid-cols-2 gap-3 w-full">
-              <Skeleton height={32} />
-              <Skeleton height={32} />
-            </div>
-          </div>
-        </CardFooter>
-      </Card>
-    </motion.div>
-  );
-}
+ 

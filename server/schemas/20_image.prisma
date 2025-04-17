@@ -28,6 +28,8 @@ model Image {
     charityID String?  @unique
     charity   Charity? @relation(fields: [charityID], references: [id])
 
+    nationalCampaignId String?
+    nationalCampaign NationalCampaign? @relation(fields: [nationalCampaignId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

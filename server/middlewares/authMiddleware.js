@@ -4,7 +4,7 @@ const prisma = require("../models/index");
 const authenticate = async (req, res, next) => {
   const secretKey = process.env.SECRET_KEY;
   const token = req.header("Authorization");
-
+  
   if (!token) {
     return res.status(401).json({ message: "Access denied." });
   }

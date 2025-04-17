@@ -7,10 +7,21 @@ const Step3 = () => {
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
   const targetType = watch("targetType");
+
+  useEffect(() => {
+    if (targetType === "GOODS") {
+      setValue("type", "storeOpportunity");
+      setValue("unitPrice", "");
+    } else if (targetType === "MONEY") {
+      setValue("type", "normalOpportunity");
+    }
+  }, [targetType]);
+
   return (
     <div className="space-y-6 grid grid-cols-[500px] mx-auto" dir="rtl">
       <motion.div
@@ -55,7 +66,6 @@ const Step3 = () => {
                 value: 100000000,
                 message: "الحد الأقصى 10 مليون دينار جزائري",
               },
-            
             })}
             variant="standard"
             color={errors.targetAmount ? "red" : "teal"}

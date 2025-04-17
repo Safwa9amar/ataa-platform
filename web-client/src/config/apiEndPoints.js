@@ -302,12 +302,13 @@ const API_ENDPOINTS = {
     UPDATE: `${BASE_URL}/devices`, // Delete a devices record by ID (ID appended later)
   },
   NATIONAL_BLOOD: {
-    GET_ALL: `${BASE_URL}/nationalCampaign`, // Get all national blood campaigns
-    GET_BY_ID: `${BASE_URL}/nationalCampaign`, // Get a national blood campaign by ID (ID appended later)
-    GET_BY_QUERY: `${BASE_URL}/nationalCampaign/query`, // Get national blood campaigns by query parameters
-    CREATE: `${BASE_URL}/nationalCampaign`, // Create a new national blood campaign
-    UPDATE: `${BASE_URL}/nationalCampaign`, // Update a national blood campaign by ID (ID appended later)
-    DELETE: `${BASE_URL}/nationalCampaign`, // Delete a national blood campaign by ID (ID appended later)
+    GET_ALL: `${BASE_URL}/national-blood-campaign`, // Get all national blood campaigns
+    GET_BY_ID: `${BASE_URL}/national-blood-campaign`, // Get a national blood campaign by ID (ID appended later)
+    GET_MY: `${BASE_URL}/national-blood-campaign/user`, // Get national blood campaigns by user ID
+    GET_BY_QUERY: `${BASE_URL}/national-blood-campaign/query`, // Get national blood campaigns by query parameters
+    CREATE: `${BASE_URL}/national-blood-campaign`, // Create a new national blood campaign
+    UPDATE: `${BASE_URL}/national-blood-campaign`, // Update a national blood campaign by ID (ID appended later)
+    DELETE: `${BASE_URL}/national-blood-campaign`, // Delete a national blood campaign by ID (ID appended later)
   },
 };
 

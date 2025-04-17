@@ -130,31 +130,7 @@ function page() {
           )}
         </div>
 
-        {/* Phone */}
-        <div>
-          <Typography className="text-xs sm:text-sm md:text-base font-medium text-gray-500 dark:text-gray-400">
-            عرض حسابي في كبار المحسنين
-          </Typography>
-          {isEditing ? (
-            <Checkbox
-              defaultChecked={user.isVisible}
-              color="indigo"
-              name="isVisible"
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  isVisible: e.target.checked,
-                }))
-              }
-              className="mt-2"
-              disabled={loading} // Disable input during loading
-            />
-          ) : (
-            <Typography className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 dark:text-gray-200">
-              {user.isVisible ? "مرئي" : "مخفي"}
-            </Typography>
-          )}
-        </div>
+     
       </div>
 
       {/* Action Buttons */}

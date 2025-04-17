@@ -23,7 +23,7 @@ export default function page() {
   const getData = async () => {
     let data = await getAllTestimonials();
     if (data) {
-      setData(data);
+      setData(data.filter((testimonial) => testimonial.user.role === "donor"));
     }
   };
   useEffect(() => {

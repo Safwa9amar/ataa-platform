@@ -23,7 +23,6 @@ const stepValidationFields = (subcategory) => {
       "field",
       "category",
       "donationScoop",
-      "type",
       ...(subcategoryStep0Fields[subcategory] || []),
     ],
     ["title", "description", "overview", "wilaya", "daira", "commune"], // Step 2

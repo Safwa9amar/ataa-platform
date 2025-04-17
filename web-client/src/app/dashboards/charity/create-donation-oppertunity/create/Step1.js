@@ -19,15 +19,17 @@ export default function Step1() {
   } = useFieldCategoryContext();
   const type = watch("type");
   const field = watch("field");
-  const subCategory = categories.find((cat) => cat.id === watch("category"))?.title
+  const subCategory = categories.find(
+    (cat) => cat.id === watch("category")
+  )?.title;
 
   useEffect(() => {
     setSelectedField(field);
   }, [field]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setValue("subCategory", subCategory);
-  },[ subCategory])
+  }, [subCategory]);
 
   const renderField = (field) => {
     switch (field.type) {
@@ -176,7 +178,7 @@ export default function Step1() {
         )}
         {errors.category && (
           <p className="text-red-500 text-sm">{errors.category.message}</p>
-        )}  
+        )}
       </AnimatePresence>
 
       <motion.select
@@ -197,24 +199,7 @@ export default function Step1() {
       {errors.donationScoop && (
         <p className="text-red-500 text-sm">{errors.donationScoop.message}</p>
       )}
-      <motion.select
-        className={`w-full border p-2 rounded-md ${
-          errors.type && "border-red-500"
-        }`}
-        {...register("type", { required: "الرجاء تحديد نوع الفرصة" })}
-        whileHover={{ scale: 1.05 }}
-        whileFocus={{ scale: 1.05 }}
-      >
-        <option value="">اختر نوع الفرصة</option>
-        <option value="storeOpportunity">فرصة متجر التبرع</option>
-        <option value="normalOpportunity">فرصة تبرع المنصة</option>
-      </motion.select>
-      {errors.type && (
-        <p className="text-red-500 text-sm">{errors.type.message}</p>
-      )}
-
       {CONSTANTS.subcategoryMap[subCategory] &&
-        type === "normalOpportunity" &&
         CONSTANTS.subcategoryMap[subCategory].map((field) =>
           renderField(field)
         )}

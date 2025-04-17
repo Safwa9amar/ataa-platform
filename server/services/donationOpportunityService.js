@@ -184,6 +184,14 @@ exports.createDonationOpportunity = async (data, user) => {
         }
       : {};
 
+    const _category = category
+      ? {
+          category: {
+            connect: { id: category },
+          },
+        }
+      : {};
+
     return await prisma.donationOpportunity.create({
       data: {
         donationScoop: data.donationScoop,
@@ -236,9 +244,7 @@ exports.createDonationOpportunity = async (data, user) => {
         field: {
           connect: { id: field },
         },
-        category: {
-          connect: { id: category },
-        },
+        ..._category,
         // ...categoryConnections,
       },
     });
@@ -264,8 +270,8 @@ exports.getMyDonationOpportunities = async (userId, params) => {
   const { status, keywords } = params;
   try {
     return await prisma.donationOpportunity.findMany({
-      orderBy : {
-        createdAt: 'desc'
+      orderBy: {
+        createdAt: "desc",
       },
       where: {
         user: {

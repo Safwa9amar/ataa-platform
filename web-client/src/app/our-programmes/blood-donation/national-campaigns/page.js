@@ -5,12 +5,14 @@ import UILoading from "@/components/UI/Loading";
 import WilayaSelect from "@/components/UI/WilayaSelect";
 import CONSTANTS from "@/config/constants";
 import { useAlgeriaCitiesContext } from "@/context/AlgeriaCitiesContext";
+import { getAllNationalBloodCampaigns } from "@/services/nationalBloodCapmaigns";
 import { getCampaignByQuery } from "@/services/NationalCampaignService";
 import { Button, IconButton } from "@material-tailwind/react";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdFilterAltOff } from "react-icons/md";
 import validator from "validator";
+import {motion} from "framer-motion";
 export default function Page() {
   const { getWilayaByCode } = useAlgeriaCitiesContext();
   const [selectedWilaya, setSelectedWilaya] = useState(""); // Empty string for all campaigns
@@ -23,7 +25,7 @@ export default function Page() {
     setLoading(true); // Start loading
     try {
       const query = wilaya ? { willayaCode: wilaya } : {}; // Conditional query object
-      const data = await getCampaignByQuery(query); // Use service method to fetch campaigns
+      const data = await getAllNationalBloodCampaigns(query); // Use service method to fetch campaigns
       setCampaigns(data);
     } catch (error) {
       console.error("Error fetching campaigns:", error);
@@ -63,11 +65,12 @@ export default function Page() {
         />
         <Button
           variant="gradient"
-          color="green"
+          size="sm"
+          color="red"
           className="flex items-center gap-2 scale-95 hover:scale-100 font-ElMessiri "
           onClick={() => handleWilayaChange("")}
         >
-          <MdFilterAltOff size={32} />
+          <MdFilterAltOff size={25} />
           <span>عرض الكل</span>
         </Button>
       </div>
@@ -80,22 +83,31 @@ export default function Page() {
           {campaigns.map((campaign) => (
             <NationalBloodDonationCard
               id={campaign.id}
+              city={getWilayaByCode(campaign.wilaya)?.wilaya_name || ""}
               key={campaign.id}
-              title={`${campaign.campaignName} - ${
-                getWilayaByCode(campaign.willayaCode)?.wilaya_name || "وطنية"
-              }`}
+              title={campaign.title}
               badgeTitle={campaign.campaignName}
               badgeColor="#E63946"
               image="/images/imageCART.png"
-              remainingAmount={`الوحدات المطلوبة: ${campaign.collectedUnit}`}
+              remainingAmount={`الوحدات المطلوبة: ${campaign.targetUnits}`}
               needyGroup={`الزمرة الأكثر احتياجا: ${
-                CONSTANTS.BLOOD_TYPES[campaign.needyBlood]
+                CONSTANTS.BLOOD_TYPES[campaign.mostNeededBlood]
               }`}
             />
           ))}
         </div>
       ) : (
-        !loading && <p>لا توجد حملات متاحة في الوقت الحالي.</p>
+        !loading && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <div className="flex flex-col items-center justify-center h-[50vh]">
+              <h1 className="text-2xl font-bold mb-4">لا توجد حملات حاليا</h1>
+            </div>
+          </motion.div>
+        )
       )}
     </div>
   );
