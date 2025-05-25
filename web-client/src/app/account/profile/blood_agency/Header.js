@@ -3,10 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Avatar, Button, Typography } from "@material-tailwind/react";
 import { motion } from "framer-motion";
 import { useCredentials } from "@/context/CredentialsContext";
-import Image from "next/image";
-import RankIcons from "@/components/UI/RankIcons";
-import { MdAccountBalanceWallet } from "react-icons/md";
-import { BiSolidDonateBlood } from "react-icons/bi";
+import { User2Icon } from "lucide-react";
 
 // Skeleton component
 function Skeleton({ className }) {
@@ -28,7 +25,7 @@ function InfoCard({ icon, value, label, loading, delay }) {
       variants={cardVariants}
       initial="hidden"
       animate="visible"
-      className="flex items-center gap-3 py-3 px-5 shadow-md bg-gray-800 text-white rounded-2xl dark:bg-gray-900 dark:shadow-none"
+      className="flex items-center gap-3 py-3 px-5 shadow-md bg-gray-800  rounded-2xl  dark:shadow-none"
     >
       {loading ? (
         <Skeleton className="w-10 h-10 rounded-full" />
@@ -98,7 +95,7 @@ function Header() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="p-6 sm:p-8 lg:p-10 rounded-lg bg-gradient-to-br from-primaryColor to-secondaryColor dark:from-gray-700 dark:to-gray-800"
+      className="p-6 sm:p-8 lg:p-10 rounded-lg shadow-sm dark:from-gray-700 dark:to-gray-800"
     >
       {/* Header Section */}
       <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center">
@@ -108,10 +105,14 @@ function Header() {
           ) : (
             <>
               <Button variant="text" onClick={() => avatarRef.current.click()}>
-                <Avatar
-                  src={avatarPreview}
-                  className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 cursor-pointer"
-                />
+                {user.photo ? (
+                  <Avatar
+                    src={avatarPreview}
+                    className="w-28 h-28 sm:w-32 sm:h-32 md:w-64 md:h-64 cursor-pointer"
+                  />
+                ) : (
+                  <User2Icon size={64} color="teal" />
+                )}
               </Button>
               <input
                 ref={avatarRef}
@@ -137,32 +138,32 @@ function Header() {
             <motion.div variants={avatarVariants}>
               <Typography
                 variant="h3"
-                className="text-white text-xl sm:text-2xl md:text-3xl dark:text-gray-300"
+                className=" text-xl :text-3xl dark:text-gray-300"
               >
                 {user.name}
               </Typography>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5">
                 <div>
-                  <Typography className="text-sm sm:text-base md:text-lg font-ElMessiri text-gray-400 dark:text-gray-500">
+                  <Typography className="text-sm sm:text-base md:text-lg font-ElMessiri ">
                     المستخدم
                   </Typography>
-                  <Typography className="text-base sm:text-lg md:text-xl font-bold text-white font-ElMessiri dark:text-gray-300">
-                    {user.role}
+                  <Typography className="text-base sm:text-lg md:text-xl font-bold  font-ElMessiri ">
+                    وكالة التبرع بالدم
                   </Typography>
                 </div>
                 <div>
-                  <Typography className="text-sm sm:text-base md:text-lg font-ElMessiri text-gray-400 dark:text-gray-500">
+                  <Typography className="text-sm sm:text-base md:text-lg font-ElMessiri ">
                     رقم الهاتف
                   </Typography>
-                  <Typography className="text-base sm:text-lg md:text-xl font-bold text-white font-ElMessiri dark:text-gray-300">
+                  <Typography className="text-base sm:text-lg md:text-xl font-bold  font-ElMessiri ">
                     {user.phone}
                   </Typography>
                 </div>
                 <div>
-                  <Typography className="text-sm sm:text-base md:text-lg font-ElMessiri text-gray-400 dark:text-gray-500">
+                  <Typography className="text-sm sm:text-base md:text-lg font-ElMessiri ">
                     البريد الالكتروني
                   </Typography>
-                  <Typography className="text-base sm:text-lg md:text-xl font-bold text-white font-ElMessiri dark:text-gray-300">
+                  <Typography className="text-base sm:text-lg md:text-xl font-bold  font-ElMessiri ">
                     {user.email}
                   </Typography>
                 </div>

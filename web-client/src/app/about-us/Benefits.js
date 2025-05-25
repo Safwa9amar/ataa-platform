@@ -43,19 +43,19 @@ export default function Benefits() {
       </DividerWithText>
 
       {/* Benefits Cards */}
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
         {benefits.map((benefit, index) => (
           <motion.div
             key={index}
-            className="flex flex-col items-center bg-teal-100 justify-center p-8 bg-mangoBlack rounded-lg rounded-tr-full rounded-bl-full shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+            className="flex flex-col items-center bg-teal-100 dark:bg-teal-800 justify-center p-8 bg-mangoBlack rounded-lg rounded-tr-full rounded-bl-full shadow-lg transition-all hover:scale-105 hover:shadow-xl"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: index * 0.2 }}
           >
-            <h3 className="text-lg font-bold text-teal-800 mb-2">
+            <h3 className="text-xl font-bold text-teal-700 dark:text-teal-200 mb-2">
               {benefit.title}
             </h3>
-            <p className="text-sm text-gray-600">{benefit.description}</p>
+            <p className="text-sm text-gray-600 dark:text-teal-100 text-center">{benefit.description}</p>
           </motion.div>
         ))}
       </div>

@@ -94,9 +94,9 @@ export function ComplexNavbar() {
         className={`${
           isHomePage
             ? isScrolled
-              ? "fixed bg-nav_bg backdrop-blur-md"
+              ? "fixed bg-background backdrop-blur-md"
               : "fixed py-2 px-2 md:py-10 md:px-10 backdrop-blur-md "
-            : "sticky bg-nav_bg border-t-0 dark:border-0 border-2 text-textColor border-borderColor shadow-sm"
+            : "sticky bg-background border-t-0 dark:border-0 border-2 text-textColor border-borderColor shadow-sm"
         } top-0 z-50 flex justify-between items-center w-full p-4  rounded-b-xl dark:rounded-none transition-all `}
       >
         <div className="flex items-center gap-2">
@@ -154,7 +154,7 @@ export function ComplexNavbar() {
         </div>
       </nav>
       {!isHomePage && (
-        <div className="bg-nav_bg border-b border-b-borderColor dark:border-b-0 w-full flex justify-between items-center">
+        <div className="bg-background border-b border-b-borderColor dark:border-b-0 w-full flex justify-between items-center">
           <div className="flex items-center md:px-10">
             {isLoggedIn && user.role === CONSTANTS.USERS_ROLES.donor && (
               <>

@@ -101,17 +101,16 @@ export default function RootLayout({ children }) {
         className={`
           flex
           flex-col
-          min-h-[50vh]
           overflow-x-hidden
-          text-textColor
-          bg-backgroundColor
+          text-foreground
+          bg-background
           ${ReemKufi.variable} antialiased
           ${ElMessiri.variable} antialiased
         `}
       >
         <ContextProviders>
           <ComplexNavbar />
-          {children}
+          <div className="min-h-[50vh]">{children}</div>
           <ToastContainer position="bottom-left" />
           <FooterWithSocialLinks />
         </ContextProviders>

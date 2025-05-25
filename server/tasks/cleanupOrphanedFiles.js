@@ -48,6 +48,7 @@ const cleanupOrphanedFiles = async () => {
 };
 
 // Schedule the job to run every 15 minutes
-cron.schedule("*/10 * * * *", cleanupOrphanedFiles);
+
+cron.schedule("*/15 * * * *", cleanupOrphanedFiles);
 
 module.exports = cleanupOrphanedFiles;
